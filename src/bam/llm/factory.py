@@ -16,6 +16,7 @@ GLOBAL_CONFIG_PATH = Path.home() / ".bam" / "config.json"
 SUPPORTED_PROVIDERS = {
     "claude": "Anthropic Claude API (requires ANTHROPIC_API_KEY)",
     "copilot": "GitHub Copilot SDK (requires Copilot CLI + subscription)",
+    "spawnie": "Spawnie router (routes to CLI agents - no API costs)",
     "mock": "Mock provider for testing (no API calls)",
 }
 
@@ -132,6 +133,24 @@ def get_llm_provider(
         if model:
             kwargs["model"] = model
         return MockProvider(**kwargs)
+
+    if name == "spawnie":
+        from .spawnie_provider import SpawnieProvider
+        kwargs = {}
+        if model:
+            kwargs["model"] = model
+        # Get spawnie-specific config from control.json if available
+        if control_manager and control_manager.exists():
+            try:
+                control_config = control_manager.load()
+                spawnie_config = control_config.get("spawnie", {})
+                if spawnie_config.get("mode"):
+                    kwargs["mode"] = spawnie_config["mode"]
+                if spawnie_config.get("timeout"):
+                    kwargs["timeout"] = spawnie_config["timeout"]
+            except Exception:
+                pass
+        return SpawnieProvider(**kwargs)
 
     providers_list = ", ".join(SUPPORTED_PROVIDERS.keys())
     raise ValueError(

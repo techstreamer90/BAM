@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Tuple
 
 from .base import BaseExtractor, ExtractionResult
+from .intermediate import IntermediateData, IntermediateNode, IntermediateEdge
 
 
 logger = logging.getLogger("bam.extractors.systemverilog")
@@ -793,6 +794,52 @@ class SystemVerilogExtractor(BaseExtractor):
             item["properties"]["tasks"] = entity.tasks
 
         return item
+
+    def to_intermediate(self, result: ExtractionResult) -> IntermediateData:
+        """Convert extraction result to intermediate format.
+
+        This is the preferred output format for Stage 2 ingestion.
+        """
+        intermediate = IntermediateData(
+            source_id=result.source_id,
+            source_type=self.EXTRACTOR_TYPE,
+            extraction_metadata={
+                "file_count": result.file_count,
+                **result.metadata
+            },
+            warnings=result.warnings,
+        )
+
+        # Convert items to intermediate nodes
+        for item in result.items:
+            node = IntermediateNode(
+                type=item["type"],
+                external_id=item["id"],
+                label=item["name"],
+                properties={
+                    **item.get("properties", {}),
+                    "category": item.get("category"),
+                    "role": item.get("role"),
+                },
+                content=item.get("description"),
+                source_location=f"{item['file_path']}:{item['line_number']}",
+            )
+            # Clean up None values in properties
+            node.properties = {k: v for k, v in node.properties.items() if v is not None}
+            intermediate.add_node(node)
+
+        # Convert relationships to intermediate edges
+        for rel in result.relationships:
+            edge = IntermediateEdge(
+                type=rel["type"],
+                source_external_id=f"{rel.get('source_type', 'module')}-{rel['source']}",
+                target_external_id=f"{rel.get('target_type', 'module')}-{rel['target']}",
+                properties={k: v for k, v in rel.items()
+                           if k not in ("type", "source", "target", "source_type", "target_type")},
+            )
+            intermediate.add_edge(edge)
+
+        return intermediate
 
     def _generate_summary(self, result: ExtractionResult) -> Dict[str, Any]:
         """Generate a summary to help agents quickly understand the codebase.

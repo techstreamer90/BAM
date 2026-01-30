@@ -1,0 +1,7 @@
+ID,Name,Description,Status,Priority,Type,Owner,Traces To,Verified By
+REQ-001,System Overview,The system shall provide core functionality for vehicle control,Approved,High,System,John Smith,,
+REQ-002,Propulsion Control,The system shall control propulsion motor based on throttle input,Approved,Critical,Functional,Jane Doe,REQ-001,TC-001
+REQ-003,Brake Control,The system shall apply brakes when brake pedal is pressed,Approved,Critical,Functional,Jane Doe,REQ-001,TC-002;TC-003
+REQ-004,Sensor Integration,The system shall integrate with temperature and pressure sensors,In Review,High,Interface,Bob Wilson,REQ-002;REQ-003,
+REQ-005,CAN Communication,The system shall communicate over CAN bus at 500kbps,Draft,Medium,Interface,Alice Brown,REQ-004,TC-004
+REQ-006,Safety Watchdog,The system shall implement a hardware watchdog with 100ms timeout,Approved,Critical,Safety,John Smith,REQ-001,TC-005

@@ -1,0 +1,4 @@
+Requirement ID,Title,Specification,State,Prio,Category,Assigned To,Parent,Test Case ID
+DR-100,Motor Controller,Motor controller shall respond within 10ms,Approved,High,Performance,Team A,DR-001,
+DR-101,Temperature Monitoring,System shall monitor temperature every 100ms,Draft,Medium,Monitoring,Team B,DR-100,TEST-101
+DR-102,Overheat Protection,System shall shutdown if temperature exceeds 85C,Approved,Critical,Safety,Team A,DR-100;DR-101,TEST-102|TEST-103

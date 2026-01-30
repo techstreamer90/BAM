@@ -1,276 +1,314 @@
 # BAM Agent Onboarding Guide
 
-This guide walks an AI agent (or a human+agent team) through the full process
-of building a digital twin model with BAM. Follow the four phases in order.
+This guide walks an AI agent through building a digital twin model with BAM.
+The process is AI-driven with human collaboration at key decision points.
+
+---
+
+## The Four Phases
+
+| Phase | Goal | AI Role | Human Role |
+|-------|------|---------|------------|
+| 1. Understand | Learn BAM concepts | Read docs | Answer questions |
+| 2. Design Sketch | Define graph schema | Propose node/edge types | Approve/refine |
+| 3. Configure Sources | Set up extraction | Analyze data, propose mappings | Approve mappings |
+| 4. Extract & Ingest | Populate the model | Run extractors, ingest data | Review, approve changes |
 
 ---
 
 ## Phase 1: Understand BAM
 
-**Goal:** Learn what BAM does and how the tool is structured.
+**Goal:** Learn BAM's two-stage architecture.
 
-1. Read `BAM_mission.md` in the repository root for the high-level vision.
-2. Skim the directory layout:
-   - `src/bam/data/` — tool code shared by all projects (scripts, pipelines, prompts, templates).
-   - A **project directory** (created by the seed workflow) holds per-project state:
-     `project.json`, `sources.json`, `model/sketch.json`, etc.
-3. Understand the three pipeline types:
-   - **Standard** (`src/bam/data/pipelines/standard.json`): Full ingestion from scratch using hardcoded parsers.
-   - **Incremental** (`src/bam/data/pipelines/incremental.json`): Delta updates to an existing model.
-   - **Agent-Driven** (`src/bam/data/pipelines/agent-driven.json`): LLM-driven ingestion where an AI analyses incoming data and produces a transform plan instead of relying on hardcoded parsers. Useful when no parser exists for a data source or the mapping requires judgment.
-4. Review `agent_tiers.json` and `process_hints.json` for guidance metadata.
+### Key Concepts
 
-**Checkpoint:** You can explain what a sketch is, what color/colors are, and
-how the pipeline stages connect.
+1. **Sketch**: The graph structure (nodes + edges). Lightweight — just IDs, types, labels.
+2. **Color**: Rich properties attached to nodes. Stored separately from sketch.
+3. **Two-Stage Pipeline**:
+   - **Stage 1 (Extraction)**: Source-specific extractors → Intermediate format
+   - **Stage 2 (Ingestion)**: Intermediate format → Sketch + Color
+4. **Intermediate Format**: Canonical JSON that all extractors produce. Reviewable.
+5. **Source Mapping**: Configuration that tells extractors how to map source data.
+
+### Architecture Overview
+
+```
+Source Files → [Extractor] → Intermediate JSON → [Ingester] → Sketch + Color
+                   ↑                                  ↑
+            Source Mapping                    Can propose sketch changes
+         (configured in Phase 3)              (approved in Phase 4)
+```
+
+**Checkpoint:** You can explain the two-stage flow and why intermediate format exists.
 
 ---
 
 ## Phase 2: Design the Sketch
 
-**Goal:** Define the graph structure (node types, edge types, colors) for the
-target project.
+**Goal:** Define the graph schema with the human.
 
-1. Pick a sketch template from `src/bam/data/sketch_templates/`:
-   | Template | Best for |
-   |----------|----------|
-   | `hardware_product.json` | ASIC, SoC, FPGA, or mixed-signal products |
-   | `software_product.json` | Software libraries, services, applications |
-   | `minimal.json` | Quick prototyping or unknown project shape |
-2. The seed workflow (`python -m bam seed execute`) creates the project with the
-   chosen template. If you are past seed, the project already exists.
-3. Answer the **sketch design questions** listed in the template — discuss
-   each one with the human.
-4. Edit `model/sketch.json` in the project to add the agreed-upon node types,
-   edge types, and initial hierarchy.
+### Step 1: Interview About the Project
 
-**Checkpoint:** `sketch.json` has a coherent set of nodes and edges, reviewed
-by the human.
+Ask the human:
+- What does this project do? (domain context)
+- What types of things do you track? (node types)
+- What relationships matter? (edge types)
+- What properties are important for each type?
 
----
+### Step 2: Propose Node Types
 
-## Phase 3: Create the Ingestion Plan
+Based on the interview, propose node types:
 
-**Goal:** Decide which data sources to ingest, in what order, and with what
-chunk strategy.
-
-1. Create a plan:
-   ```
-   python -m bam --project <dir> plan create
-   ```
-2. For each data source, add steps:
-   ```
-   python -m bam --project <dir> plan add-step \
-     --phase backbone --name "Ingest RTL modules" \
-     --source rtl --agent-tier standard \
-     --description "Parse Verilog files and create RTL module nodes"
-   ```
-3. Review the plan:
-   ```
-   python -m bam --project <dir> plan show
-   ```
-4. Validate ordering and dependencies:
-   ```
-   python -m bam --project <dir> plan validate
-   ```
-
-### Ordering Rules (from `process_hints.json`)
-
-- **Backbone first:** Ingest top-level documents before detail sources.
-- **Sketch before color:** Get the graph structure right, then enrich.
-- **Hierarchical order:** Parent nodes before children.
-- **Cross-references last:** Link sources (traceability, coverage) come after
-  both ends of the link exist.
-
-### Chunk Size Reference
-
-| Data Type | Recommended Max Batch | Notes |
-|-----------|-----------------------|-------|
-| RTL / Verilog files | 50 files | Group by module hierarchy |
-| Documentation pages | 100 pages | Group by section |
-| Test cases | 200 cases | Group by test plan |
-| Requirements | 100 items | Group by specification |
-| Coverage data | 1000 bins | Group by coverage group |
-
-**Checkpoint:** `ingestion_plan.json` exists and `plan validate` passes.
-
----
-
-## Phase 4: Execute the Plan
-
-**Goal:** Run ingestion step-by-step, verifying after each step.
-
-1. See the next step:
-   ```
-   python -m bam --project <dir> plan next
-   ```
-2. Execute the step (run the appropriate pipeline stage or parser).
-3. Mark it complete:
-   ```
-   python -m bam --project <dir> plan complete-step --step <id>
-   ```
-4. After ingestion, run **reconciliation** to bridge parser nodes with
-   the pre-existing sketch hierarchy. Source connectors that call
-   `_reconcile_sketch()` do this automatically — creating `REALIZES`
-   edges from parser nodes to matching sketch nodes.
-5. After each major phase, run verification:
-   ```
-   python -m bam --project <dir> stats
-   python -m bam --project <dir> test run
-   ```
-   The `test run` command executes the full regression test chain — an
-   accumulating suite that grows with each ingestion. It catches
-   regressions where a later ingestion breaks earlier data.
-6. To see what tests have accumulated:
-   ```
-   python -m bam --project <dir> test show
-   ```
-7. Repeat until the plan is fully executed.
-
-### Using the Agent-Driven Pipeline
-
-For data sources without a pre-built parser, use the agent-driven pipeline
-instead of standard/incremental. The LLM analyses the data and produces a
-transform plan automatically.
-
-**One-time setup** (if not already configured):
 ```
-python -m bam setup llm --provider claude --api-key sk-ant-...
-# Or rely on the ANTHROPIC_API_KEY environment variable:
-python -m bam setup llm --provider claude
+Example for a hardware project:
+- DesignRequirement (status, priority, owner)
+- RTLModule (parameters, ports, file_path)
+- VerificationTest (status, pass_rate, coverage)
+- CoverageItem (hits, goal, status)
 ```
 
-**Running agent-driven ingestion:**
-```
-python -m bam orchestrator create <source-id> --pipeline agent-driven
-python -m bam orchestrator run <task-id>
-```
+### Step 3: Propose Edge Types
 
-The agent-review stage sends a sample of the raw data plus the current sketch
-summary to the LLM. The LLM returns a `TransformPlan` (node/edge mappings)
-and optionally a `SketchChangeProposal` (new types needed).
-
-**If the pipeline pauses** (major sketch changes proposed):
 ```
-python -m bam --project <dir> review show       # inspect proposed changes
-python -m bam --project <dir> review approve    # apply to sketch
-python -m bam --project <dir> resume <task-id>  # continue from transform
-
-# Or reject:
-python -m bam --project <dir> review reject --feedback "..."
-python -m bam --project <dir> resume <task-id>  # re-runs agent-review
+Example edges:
+- TRACES_TO: Requirement → RTLModule
+- IMPLEMENTS: RTLModule → Requirement
+- VERIFIES: VerificationTest → Requirement
+- MEASURES: CoverageItem → VerificationTest
+- INSTANTIATES: RTLModule → RTLModule (hierarchy)
 ```
 
-Minor sketch changes (nodes using existing types) are auto-applied without
-pausing. The transform stage then executes the plan mechanically using
-pattern-based ID generation, with an LLM fallback for items that don't match
-any mapping.
+### Step 4: Create Initial Sketch
 
-**Checkpoint:** All plan steps are complete, model stats look correct,
-`test run` passes, and verification passes.
-
----
-
-## Sketch Format Reference
-
-The sketch (`model/sketch.json`) uses a canonical format for nodes and edges.
-
-### Canonical Node Format
+Either use a template from `src/bam/data/sketch_templates/` or create custom:
 
 ```json
 {
-  "node-id": {
-    "id": "node-id",
-    "type": "RTLModule",
-    "label": "top_module",
-    "source_id": "project-rtl"
-  }
+  "version": "1.0.0",
+  "metadata": {"node_count": 0, "edge_count": 0},
+  "nodes": {},
+  "edges": {},
+  "node_types": ["DesignRequirement", "RTLModule", "VerificationTest"],
+  "edge_types": ["TRACES_TO", "IMPLEMENTS", "VERIFIES", "INSTANTIATES"]
 }
 ```
 
-Fields:
-- `id` (required): Unique node identifier.
-- `type` (required): Node type (e.g., `Product`, `Subsystem`, `RTLModule`, `TestCase`).
-- `label` (required): Human-readable display name.
-- `source_id` (optional): Which source/parser created this node.
+**Checkpoint:** `model/sketch.json` exists with agreed node/edge types.
 
-### Canonical Edge Format
+---
+
+## Phase 3: Configure Sources
+
+**Goal:** For each data source, create a mapping configuration.
+
+### Step 1: Identify Data Sources
+
+Ask the human:
+- What data sources exist? (RTL files, docs, requirements DB, etc.)
+- Where is each source located?
+- What format is each source?
+
+### Step 2: Analyze Each Source
+
+For each source, examine sample data:
+
+```python
+# Example: Analyzing SystemVerilog files
+from bam.extractors import SystemVerilogExtractor
+
+extractor = SystemVerilogExtractor('rtl-source')
+result = extractor.extract_directory(Path('/path/to/rtl'))
+
+# Show summary to human
+print(f"Found: {result.item_count} items")
+print(f"Types: {result.metadata.get('by_type', {})}")
+```
+
+### Step 3: Propose Source Mapping
+
+Based on analysis, propose how source data maps to sketch:
+
+```
+SystemVerilog → Sketch Mapping:
+- module → RTLModule
+- interface → RTLInterface (new type needed?)
+- class extends uvm_* → VerificationTest
+- INSTANTIATES edges for module hierarchy
+- IMPORTS edges for package dependencies
+```
+
+### Step 4: Handle New Types
+
+If source data needs types not in sketch:
+1. Propose adding new node/edge types
+2. Get human approval
+3. Update sketch with new types
+
+### Step 5: Save Source Mapping
 
 ```json
 {
-  "edge-id": {
-    "id": "edge-id",
-    "type": "CONTAINS",
-    "source_node_id": "product-top",
-    "target_node_id": "subsys-cpu",
-    "source_id": null
-  }
+  "source_type": "systemverilog",
+  "source_id": "rtl-source",
+  "node_mappings": [
+    {"source_pattern": "module", "node_type": "RTLModule"},
+    {"source_pattern": "class", "node_type": "VerificationClass"}
+  ],
+  "edge_mappings": [
+    {"relationship": "INSTANTIATES", "edge_type": "INSTANTIATES"}
+  ]
 }
 ```
 
-Fields:
-- `id` (required): Unique edge identifier.
-- `type` (required): Edge type in **UPPERCASE** (e.g., `CONTAINS`, `INSTANTIATES`, `VERIFIES`, `REALIZES`).
-- `source_node_id` (required): ID of the source node.
-- `target_node_id` (required): ID of the target node.
-- `source_id` (optional): Which source/parser created this edge.
-
-### Edge Type Convention
-
-All edge types must be UPPERCASE. Standard edge types:
-`CONTAINS`, `INSTANTIATES`, `IMPLEMENTS`, `VERIFIES`, `TRACES_TO`, `DEPENDS_ON`,
-`CONNECTS_TO`, `COVERS`, `MEASURES`, `DOCUMENTS`, `DERIVES_FROM`, `CONFIGURES`,
-`REALIZES`, `HAS_PORT`, `ENRICHES`.
-
-Old lowercase edge types are automatically normalized to UPPERCASE on load.
+**Checkpoint:** `source_mappings/{source_id}.json` exists for each source.
 
 ---
 
-## Parser Node ID Convention
+## Phase 4: Extract & Ingest
 
-All parser-generated node IDs follow the pattern:
+**Goal:** Run the two-stage pipeline for each source.
 
-```
-{source_id}-{entity_name}
+### Stage 1: Extraction
+
+Run the appropriate extractor:
+
+```python
+from bam.extractors import SystemVerilogExtractor
+
+extractor = SystemVerilogExtractor('rtl-source')
+result = extractor.extract_directory(Path('/path/to/rtl'))
+intermediate = extractor.to_intermediate(result)
+
+# Save for review
+intermediate.save(Path('intermediate/rtl-source.json'))
 ```
 
-Examples:
-- RTL module: `myproject-rtl-top_module`
-- Test case: `myproject-dv-smoke_test`
-- Doc section: `myproject-docs-overview`
-- Config: `myproject-cfg-default`
-- Port: `myproject-rtl-top_module-port-clk_i`
-- Parameter: `myproject-rtl-top_module-param-DataWidth`
+**Tell the human:** "Extracted {N} nodes and {M} edges. Intermediate file ready for review."
 
-Edge IDs follow: `edge-{source_node_id}-{EDGE_TYPE}-{target_entity}`
+### Review Point
 
-This convention ensures IDs are deterministic and re-runnable (same input
-always produces the same IDs).
+Before ingestion, offer to show:
+- Summary statistics
+- Sample nodes/edges
+- Any warnings from extraction
+
+### Stage 2: Ingestion
+
+Ingest into the sketch:
+
+```python
+from bam.extractors import IntermediateIngester
+
+ingester = IntermediateIngester(Path('./project'))
+
+# Dry run first
+result = ingester.ingest(intermediate, dry_run=True)
+print(f"Would add: {result.nodes_added} nodes, {result.edges_added} edges")
+
+# If human approves, do real ingestion
+result = ingester.ingest(intermediate)
+```
+
+### Handling Sketch Changes
+
+If ingestion encounters unknown types:
+
+```
+AI: "The intermediate data has node type 'RTLInterface' which isn't in the sketch."
+AI: "Options:
+     1. Add RTLInterface as a new node type
+     2. Map RTLInterface → RTLModule (merge types)
+     3. Skip these nodes"
+Human: "Add it as a new type"
+AI: "Updated sketch with RTLInterface. Continuing ingestion..."
+```
+
+### Verification
+
+After ingestion:
+
+```bash
+# Check model statistics
+python -m bam --project ./project stats
+
+# Verify structure
+python -m bam --project ./project graph check
+```
+
+**Checkpoint:** Model populated, stats look correct, no errors.
 
 ---
 
-## Agent Tier Reference
+## Quick Reference
 
-| Tier | Description | Typical Tasks |
-|------|-------------|---------------|
-| **low** | Simple, repetitive, low-risk | Download, file copying, format conversion |
-| **standard** | Moderate judgment needed | Parsing, basic transforms, report generation |
-| **high** | Complex reasoning required | Schema design, cross-reference mapping, verification, conflict resolution |
+### Intermediate Format
 
-See `agent_tiers.json` for full definitions including model recommendations.
+```json
+{
+  "format_version": "1.0",
+  "source_id": "source-name",
+  "nodes": [
+    {"type": "NodeType", "external_id": "...", "label": "...", "properties": {...}}
+  ],
+  "edges": [
+    {"type": "EDGE_TYPE", "source_external_id": "...", "target_external_id": "..."}
+  ]
+}
+```
+
+### Node ID Convention
+
+All ingested node IDs follow: `{source_id}-{external_id}`
+
+Example: `rtl-source-module-ibex_core`
+
+### Edge ID Convention
+
+Edge IDs follow: `{source_id}-{edge_type}-{source_external_id}-{target_external_id}`
+
+### Available Extractors
+
+| Extractor | File Types | Use For |
+|-----------|------------|---------|
+| `SystemVerilogExtractor` | `.sv`, `.v` | RTL, testbenches |
+| `RequirementsExtractor` | `.xlsx`, `.csv` | Design requirements in spreadsheets |
+| *(planned)* `PDFExtractor` | `.pdf` | Specifications, requirements |
+| *(planned)* `WordExtractor` | `.docx` | Design documents |
 
 ---
 
-## Quick Reference: Key Files
+## Troubleshooting
+
+### "Unknown node type" during ingestion
+
+The intermediate data has a type not in the sketch. Options:
+1. Add the type to sketch
+2. Edit intermediate file to use existing type
+3. Update source mapping to map to existing type
+
+### "Edge references unknown node"
+
+The edge points to a node not yet ingested. Options:
+1. Ingest the source containing that node first
+2. Create placeholder node in sketch
+3. Skip edge (will be a warning)
+
+### Extraction produces unexpected results
+
+1. Check the source mapping configuration
+2. Review extractor output with `--verbose`
+3. Examine intermediate file directly
+4. Adjust mapping and re-extract
+
+---
+
+## Files Reference
 
 | File | Location | Purpose |
 |------|----------|---------|
-| `AGENT_GUIDE.md` | `src/bam/data/` | This file |
-| `agent_tiers.json` | `src/bam/data/` | Tier definitions |
-| `process_hints.json` | `src/bam/data/` | Ordering advice and common mistakes |
-| `ingestion_plan_template.json` | `src/bam/data/` | Template for new ingestion plans |
-| Sketch templates | `src/bam/data/sketch_templates/` | Starting points for sketch design |
-| Pipeline definitions | `src/bam/data/pipelines/` | Stage definitions with agent guidance |
-| `project.json` | `<project>/` | Per-project configuration |
-| `ingestion_plan.json` | `<project>/` | Per-project ingestion plan |
-| `test_chain.json` | `<project>/` | Accumulating regression test chain |
-| `model/sketch.json` | `<project>/model/` | The graph sketch |
+| `model/sketch.json` | `<project>/model/` | Graph structure |
+| `model/colors/*.json` | `<project>/model/colors/` | Node properties |
+| `source_mappings/*.json` | `<project>/source_mappings/` | Extraction config |
+| `intermediate/*.json` | `<project>/intermediate/` | Extracted data (reviewable) |
+| `sources.json` | `<project>/` | Data source registry |
+| `ingestion_plan.json` | `<project>/` | Ingestion order |

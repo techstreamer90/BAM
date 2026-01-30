@@ -28,6 +28,11 @@ DEFAULT_MODELS = {
         "transform-fallback": "",
         "verification": "",
     },
+    "spawnie": {
+        "agent-review": "claude-sonnet",      # Spawnie routes to best available
+        "transform-fallback": "claude-haiku", # Cost-effective for fallback
+        "verification": "claude-haiku",       # Cost-effective for verification
+    },
     "mock": {
         "agent-review": "mock-v1",
         "transform-fallback": "mock-v1",
@@ -246,6 +251,7 @@ class ControlManager:
         return {
             "claude": "ANTHROPIC_API_KEY",
             "copilot": "GITHUB_TOKEN",
+            "spawnie": "",  # Spawnie routes to CLIs, no direct API key needed
             "mock": "",
         }.get(provider, "")
 
@@ -340,7 +346,7 @@ class ControlManager:
         warnings = []
 
         # Check provider is valid
-        valid_providers = ["claude", "copilot", "mock"]
+        valid_providers = ["claude", "copilot", "spawnie", "mock"]
         if config.llm.provider not in valid_providers:
             errors.append(f"Unknown provider: {config.llm.provider}")
 
@@ -416,6 +422,7 @@ def create_env_example(project_dir: str, provider: str = "claude") -> Path:
     env_vars = {
         "claude": "ANTHROPIC_API_KEY=sk-ant-api03-your-key-here",
         "copilot": "# GitHub Copilot uses gh CLI authentication\n# Ensure you're logged in: gh auth login",
+        "spawnie": "# Spawnie routes to CLI agents - no direct API key needed\n# Ensure Claude CLI or Copilot CLI is installed and authenticated\n# Run 'spawnie models' to see available routes",
         "mock": "# No credentials required for mock provider",
     }
 

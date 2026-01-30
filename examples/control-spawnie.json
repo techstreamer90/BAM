@@ -1,0 +1,46 @@
+{
+  "version": "1.0.0",
+  "description": "Example control.json using Spawnie as LLM provider",
+
+  "llm": {
+    "provider": "spawnie",
+    "credentials": {
+      "source": "env",
+      "env_var": ""
+    },
+    "models_by_task": {
+      "agent-review": {
+        "model": "claude-sonnet",
+        "temperature": 0.0,
+        "max_tokens": 4096,
+        "description": "Schema analysis and transform planning"
+      },
+      "transform-fallback": {
+        "model": "claude-haiku",
+        "temperature": 0.0,
+        "max_tokens": 4096,
+        "description": "Fallback for unmatched items (cost-effective)"
+      },
+      "verification": {
+        "model": "claude-haiku",
+        "temperature": 0.0,
+        "max_tokens": 4096,
+        "description": "Consistency and validation checks"
+      }
+    }
+  },
+
+  "spawnie": {
+    "mode": "blocking",
+    "timeout": 300
+  },
+
+  "security": {
+    "redact_patterns": [],
+    "allowed_domains": []
+  },
+
+  "defaults": {
+    "source": "generic"
+  }
+}
