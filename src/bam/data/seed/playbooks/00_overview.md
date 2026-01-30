@@ -2,55 +2,66 @@
 
 ## Purpose
 
-Introduce BAM to the human and set expectations for the setup process.
+Introduce BAM and the AI-driven sketch creation process.
 
 ## What to Tell the Human
 
-BAM (Build Accurate Models) creates multi-colored digital twin models from
-existing project data. It ingests source code, documentation, requirements,
-test plans, and other artifacts into a structured graph model that AI agents
-can query with high speed and precision.
+BAM (Build Accurate Models) creates digital twin graph models from project data.
 
-### Key Concepts
+### The Core Concept
 
-- **Sketch**: The graph structure — nodes (components, documents, tests) and
-  edges (relationships between them). Think of it as the blueprint.
-- **Color/Colors**: Detailed data attached to sketch nodes, organized by
-  domain (conceptual, design, verification, etc.). Different backends can
-  store different colors.
-- **Ingestion**: The process of parsing source data and populating the model.
-- **Pipeline**: A defined sequence of stages (extract, transform, validate,
-  integrate) that processes data into the model. Three types exist:
-  standard (hardcoded parsers), incremental (delta updates), and
-  agent-driven (LLM analyses data and produces a transform plan).
+Your project data lives in different sources — requirements in Jama, designs in
+Excel, code in SystemVerilog files. BAM brings these together into a unified
+**sketch** (graph model) that captures the relationships between everything.
 
-### What BAM_seed Does
+### How It Works
 
-BAM_seed is the bootstrapping layer. It will:
+```
+project_input/           Your prepared input folders
+├── Jama/               (requirements exports)
+├── Excel/              (design spreadsheets)
+├── RTL/                (SystemVerilog files)
+└── Docs/               (PDFs, Word docs)
+        ↓
+   [AI Agent]           Scans, plans, orchestrates via Spawnie
+        ↓
+   model/sketch.json    Unified graph model
+```
 
-1. Interview you about your project (what it is, what data you have, how
-   complex it is, what you want to do with the model)
-2. Recommend a setup configuration (template, backend, parsers, pipeline)
-3. Explain the recommended plan so you understand what will be created
-4. Execute the setup to create your project infrastructure
-5. Hand off to `docs/agent_guide.md` for sketch design and ingestion
+### The Agent's Approach
 
-### The Human's Role
+1. **Scan** — Look at all your `project_input/` folders, understand what's there
+2. **Assess** — Check if anything is missing, ask clarifying questions
+3. **Plan** — Create a Spawnie workflow to extract and analyze each source
+4. **Execute** — Run the workflow, monitor progress in real-time
+5. **Synthesize** — Collect results and design the final sketch structure
 
-- Answer interview questions honestly — the recommendations depend on it
-- Approve or adjust the recommended setup before execution
-- Provide access to source data locations
-- Participate in sketch design decisions after setup
+### Key Terms
 
-### Time Commitment
+- **Sketch**: Graph structure — nodes (components, requirements, tests) and
+  edges (relationships like traces-to, verifies, implements)
+- **Color**: Detailed properties attached to nodes (metadata, status, etc.)
+- **Spawnie**: Workflow orchestrator that runs extraction tasks in parallel
+- **Intermediate Format**: Canonical JSON that all extractors produce
 
-The interview and setup process is interactive. The agent handles all file
-creation and configuration; the human provides domain knowledge and decisions.
+### Your Role
+
+- Prepare your input data in `project_input/` subfolders
+- Answer questions when the agent needs clarification
+- Review and approve the proposed sketch design
+- Monitor progress (optional) via `spawnie monitor`
+
+### The Agent's Role
+
+- Analyze what data you have
+- Identify gaps or unclear areas
+- Create an extraction workflow
+- Run and monitor the workflow
+- Synthesize results into a coherent sketch
 
 ## Agent Notes
 
-- Read this playbook first, then present the overview conversationally
-- Don't dump all information at once — gauge the human's familiarity with
-  modeling concepts
-- If the human is experienced, abbreviate; if new, explain more
-- After the overview, proceed to `01_choose_location.md`
+- Present this conversationally, gauge the human's familiarity
+- Emphasize that they should prepare `project_input/` folders first
+- The agent drives the process but the human approves structural decisions
+- After overview, proceed to `01_prepare_inputs.md`
