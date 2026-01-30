@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bam-model"
+version = "0.1.0"
+description = "BAM - Build Accurate Models: multi-colored graph model builder for digital twins"
+readme = "README.md"
+license = "LicenseRef-Proprietary"
+requires-python = ">=3.9"
+dependencies = [
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+neo4j = ["neo4j>=5.0"]
+arango = ["python-arango>=7.0"]
+# LLM provider dependencies
+llm = ["anthropic>=0.30.0"]  # Claude (Anthropic) - default
+claude = ["anthropic>=0.30.0"]  # Alias for llm
+copilot = ["github-copilot-sdk>=0.1.0"]  # GitHub Copilot SDK
+# All LLM providers
+llm-all = ["anthropic>=0.30.0", "github-copilot-sdk>=0.1.0"]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+bam = ["data/**/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

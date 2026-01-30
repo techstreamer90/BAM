@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "notes": [
+    "This is the control file:",
+    "1) Enable/disable tasks below",
+    "2) Keep the available agents list up to date",
+    "3) For each task, set the agent to use"
+  ],
+
+  "defaults": {
+    "model": "sonnet",
+    "maxParallel": 2,
+    "allowNetwork": true,
+
+    "cleanOutputBeforeRun": true,
+    "cleanupOutputMode": "archive"
+  },
+
+  "agents": {
+    "local": {
+      "type": "local",
+      "description": "Runs the task locally using scripts/cleanup.ps1 (fast, deterministic)."
+    },
+    "copilot-review": {
+      "type": "local+copilot-review",
+      "description": "Runs locally, then writes a Copilot review prompt into the run folder (reviewed by GPT-5.2 in VS Code Copilot Chat).",
+      "model": "gpt-5.2"
+    },
+    "claude-review": {
+      "type": "local+claude-review",
+      "description": "Runs locally, then asks Claude to write ai_review.md for that run.",
+      "model": "sonnet"
+    }
+  },
+
+  "tasks": [
+    { "id": "T01", "enabled": true,  "agent": "copilot-review" },
+    { "id": "T02", "enabled": true,  "agent": "copilot-review" },
+    { "id": "T03", "enabled": false, "agent": "local" },
+    { "id": "T04", "enabled": true,  "agent": "copilot-review" },
+    { "id": "T05", "enabled": false, "agent": "local" },
+    { "id": "T06", "enabled": false, "agent": "local" },
+    { "id": "T07", "enabled": false, "agent": "claude-review", "allowNetwork": false },
+    { "id": "T08", "enabled": false, "agent": "local" }
+  ]
+}

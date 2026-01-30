@@ -1,0 +1,107 @@
+{
+  "exportInfo": {
+    "source": "mock-jama",
+    "exportedAt": "2026-01-26T10:00:00Z",
+    "project": "Vehicle Control System",
+    "chunk": 1,
+    "description": "Core system requirements - the backbone"
+  },
+  "items": [
+    {
+      "id": "REQ-001",
+      "type": "requirement",
+      "name": "System Overview",
+      "description": "The Vehicle Control System (VCS) shall provide integrated control of vehicle propulsion, braking, and steering functions.",
+      "status": "approved",
+      "priority": "high",
+      "level": "system",
+      "relationships": []
+    },
+    {
+      "id": "REQ-002",
+      "type": "requirement",
+      "name": "Propulsion Control",
+      "description": "The VCS shall control vehicle propulsion based on driver throttle input and system constraints.",
+      "status": "approved",
+      "priority": "high",
+      "level": "subsystem",
+      "relationships": [
+        {"type": "derives", "target": "REQ-001"}
+      ]
+    },
+    {
+      "id": "REQ-003",
+      "type": "requirement",
+      "name": "Brake Control",
+      "description": "The VCS shall control vehicle braking based on driver brake input and safety system commands.",
+      "status": "approved",
+      "priority": "high",
+      "level": "subsystem",
+      "relationships": [
+        {"type": "derives", "target": "REQ-001"}
+      ]
+    },
+    {
+      "id": "REQ-004",
+      "type": "requirement",
+      "name": "Steering Control",
+      "description": "The VCS shall provide electric power steering assist proportional to vehicle speed and driver input.",
+      "status": "approved",
+      "priority": "high",
+      "level": "subsystem",
+      "relationships": [
+        {"type": "derives", "target": "REQ-001"}
+      ]
+    },
+    {
+      "id": "REQ-005",
+      "type": "requirement",
+      "name": "Sensor Integration",
+      "description": "The VCS shall integrate data from wheel speed sensors, throttle position sensor, brake pressure sensor, and steering angle sensor.",
+      "status": "approved",
+      "priority": "high",
+      "level": "subsystem",
+      "relationships": [
+        {"type": "derives", "target": "REQ-001"}
+      ]
+    },
+    {
+      "id": "REQ-006",
+      "type": "requirement",
+      "name": "Communication Bus",
+      "description": "The VCS shall communicate via CAN bus at 500 kbps with all vehicle subsystems.",
+      "status": "approved",
+      "priority": "medium",
+      "level": "subsystem",
+      "relationships": [
+        {"type": "derives", "target": "REQ-001"}
+      ]
+    },
+    {
+      "id": "REQ-007",
+      "type": "requirement",
+      "name": "Response Time",
+      "description": "The VCS shall respond to driver inputs within 50ms under normal operating conditions.",
+      "status": "approved",
+      "priority": "high",
+      "level": "performance",
+      "relationships": [
+        {"type": "derives", "target": "REQ-002"},
+        {"type": "derives", "target": "REQ-003"},
+        {"type": "derives", "target": "REQ-004"}
+      ]
+    },
+    {
+      "id": "REQ-008",
+      "type": "requirement",
+      "name": "Operating Temperature",
+      "description": "The VCS shall operate within specifications at ambient temperatures from -40C to +85C.",
+      "status": "approved",
+      "priority": "medium",
+      "level": "environmental",
+      "relationships": [
+        {"type": "derives", "target": "REQ-001"}
+      ]
+    }
+  ]
+}

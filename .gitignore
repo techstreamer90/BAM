@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Environment variables (may contain credentials)
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project runtime artifacts (created per-project, not in the package)
+data/*
+!data/.gitkeep
+output/*
+!output/.gitkeep
+
+# Misc personal notes
+misc/

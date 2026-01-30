@@ -1,0 +1,216 @@
+# Mock JAMA Specifications Fixtures
+# Verifies specification nodes and relationships from mock-jama-specs source
+
+version: "1.0"
+source_id: "mock-jama-specs"
+
+data_points:
+  # Node existence checks
+  - id: "specs-001"
+    type: "node_exists"
+    description: "Propulsion Controller Module specification exists"
+    tags: ["existence", "specs"]
+    query:
+      node_id: "mock-jama-specs-SPEC-001"
+    expected:
+      exists: true
+      type: "Specification"
+      label: "Propulsion Controller Module"
+
+  - id: "specs-002"
+    type: "node_exists"
+    description: "Brake Controller Module specification exists"
+    tags: ["existence", "specs"]
+    query:
+      node_id: "mock-jama-specs-SPEC-002"
+    expected:
+      exists: true
+      type: "Specification"
+      label: "Brake Controller Module"
+
+  - id: "specs-003"
+    type: "node_exists"
+    description: "Steering Assist Module specification exists"
+    tags: ["existence", "specs"]
+    query:
+      node_id: "mock-jama-specs-SPEC-003"
+    expected:
+      exists: true
+      type: "Specification"
+      label: "Steering Assist Module"
+
+  - id: "specs-004"
+    type: "node_exists"
+    description: "Sensor Hub specification exists"
+    tags: ["existence", "specs"]
+    query:
+      node_id: "mock-jama-specs-SPEC-004"
+    expected:
+      exists: true
+      type: "Specification"
+      label: "Sensor Hub"
+
+  - id: "specs-005"
+    type: "node_exists"
+    description: "CAN Interface specification exists"
+    tags: ["existence", "specs"]
+    query:
+      node_id: "mock-jama-specs-SPEC-005"
+    expected:
+      exists: true
+      type: "Specification"
+      label: "CAN Interface"
+
+  - id: "specs-006"
+    type: "node_exists"
+    description: "Fault Manager specification exists"
+    tags: ["existence", "specs"]
+    query:
+      node_id: "mock-jama-specs-SPEC-006"
+    expected:
+      exists: true
+      type: "Specification"
+      label: "Fault Manager"
+
+  - id: "specs-007"
+    type: "node_exists"
+    description: "Watchdog Configuration specification exists"
+    tags: ["existence", "specs"]
+    query:
+      node_id: "mock-jama-specs-SPEC-007"
+    expected:
+      exists: true
+      type: "Specification"
+      label: "Watchdog Configuration"
+
+  # Node count checks
+  - id: "specs-count-001"
+    type: "node_count"
+    description: "Should have exactly 7 specifications"
+    tags: ["count", "specs"]
+    query:
+      node_type: "Specification"
+      source_id: "mock-jama-specs"
+    expected:
+      count: 7
+
+  # Edge existence checks - SATISFIES relationships
+  - id: "specs-edge-001"
+    type: "edge_exists"
+    description: "SPEC-001 satisfies REQ-002 (propulsion controller -> propulsion control)"
+    tags: ["edge", "specs", "satisfies"]
+    query:
+      source_node_id: "mock-jama-specs-SPEC-001"
+      target_node_id: "mock-jama-core-REQ-002"
+      edge_type: "SATISFIES"
+    expected:
+      exists: true
+
+  - id: "specs-edge-002"
+    type: "edge_exists"
+    description: "SPEC-002 satisfies REQ-003 (brake controller -> brake control)"
+    tags: ["edge", "specs", "satisfies"]
+    query:
+      source_node_id: "mock-jama-specs-SPEC-002"
+      target_node_id: "mock-jama-core-REQ-003"
+      edge_type: "SATISFIES"
+    expected:
+      exists: true
+
+  - id: "specs-edge-003"
+    type: "edge_exists"
+    description: "SPEC-002 satisfies SAF-002 (brake controller -> brake override)"
+    tags: ["edge", "specs", "satisfies", "safety"]
+    query:
+      source_node_id: "mock-jama-specs-SPEC-002"
+      target_node_id: "mock-jama-safety-SAF-002"
+      edge_type: "SATISFIES"
+    expected:
+      exists: true
+
+  - id: "specs-edge-004"
+    type: "edge_exists"
+    description: "SPEC-003 satisfies REQ-004 (steering assist -> steering control)"
+    tags: ["edge", "specs", "satisfies"]
+    query:
+      source_node_id: "mock-jama-specs-SPEC-003"
+      target_node_id: "mock-jama-core-REQ-004"
+      edge_type: "SATISFIES"
+    expected:
+      exists: true
+
+  - id: "specs-edge-005"
+    type: "edge_exists"
+    description: "SPEC-004 satisfies REQ-005 (sensor hub -> sensor integration)"
+    tags: ["edge", "specs", "satisfies"]
+    query:
+      source_node_id: "mock-jama-specs-SPEC-004"
+      target_node_id: "mock-jama-core-REQ-005"
+      edge_type: "SATISFIES"
+    expected:
+      exists: true
+
+  - id: "specs-edge-006"
+    type: "edge_exists"
+    description: "SPEC-004 satisfies SAF-001 (sensor hub -> fault detection)"
+    tags: ["edge", "specs", "satisfies", "safety"]
+    query:
+      source_node_id: "mock-jama-specs-SPEC-004"
+      target_node_id: "mock-jama-safety-SAF-001"
+      edge_type: "SATISFIES"
+    expected:
+      exists: true
+
+  - id: "specs-edge-007"
+    type: "edge_exists"
+    description: "SPEC-005 satisfies REQ-006 (CAN interface -> communication bus)"
+    tags: ["edge", "specs", "satisfies"]
+    query:
+      source_node_id: "mock-jama-specs-SPEC-005"
+      target_node_id: "mock-jama-core-REQ-006"
+      edge_type: "SATISFIES"
+    expected:
+      exists: true
+
+  - id: "specs-edge-008"
+    type: "edge_exists"
+    description: "SPEC-006 satisfies SAF-001 (fault manager -> fault detection)"
+    tags: ["edge", "specs", "satisfies", "safety"]
+    query:
+      source_node_id: "mock-jama-specs-SPEC-006"
+      target_node_id: "mock-jama-safety-SAF-001"
+      edge_type: "SATISFIES"
+    expected:
+      exists: true
+
+  - id: "specs-edge-009"
+    type: "edge_exists"
+    description: "SPEC-007 satisfies SAF-005 (watchdog config -> watchdog timer)"
+    tags: ["edge", "specs", "satisfies", "safety"]
+    query:
+      source_node_id: "mock-jama-specs-SPEC-007"
+      target_node_id: "mock-jama-safety-SAF-005"
+      edge_type: "SATISFIES"
+    expected:
+      exists: true
+
+  # Relationship count for specifications
+  - id: "specs-rel-001"
+    type: "relationship_count"
+    description: "SPEC-002 has at least 3 SATISFIES relationships"
+    tags: ["relationship", "specs"]
+    query:
+      node_id: "mock-jama-specs-SPEC-002"
+      edge_type: "SATISFIES"
+    expected:
+      min_count: 3
+
+  - id: "specs-rel-002"
+    type: "relationship_count"
+    description: "SPEC-004 has at least 3 SATISFIES relationships"
+    tags: ["relationship", "specs"]
+    query:
+      node_id: "mock-jama-specs-SPEC-004"
+      edge_type: "SATISFIES"
+    expected:
+      min_count: 3

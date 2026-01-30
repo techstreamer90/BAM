@@ -1,0 +1,57 @@
+{
+  "version": "1.0.0",
+  "description": "Template for creating project-specific ingestion plans",
+  "phases": [
+    {
+      "id": "backbone",
+      "name": "Backbone Ingestion",
+      "description": "Ingest top-level documents and create the core graph structure",
+      "order": 1,
+      "steps": []
+    },
+    {
+      "id": "enrichment",
+      "name": "Enrichment",
+      "description": "Add detail nodes and color data to the existing sketch",
+      "order": 2,
+      "steps": []
+    },
+    {
+      "id": "cross-references",
+      "name": "Cross-References",
+      "description": "Ingest traceability, coverage, and other linking sources",
+      "order": 3,
+      "steps": []
+    },
+    {
+      "id": "validation",
+      "name": "Validation",
+      "description": "Final model verification and consistency checks",
+      "order": 4,
+      "steps": []
+    }
+  ],
+  "stepTemplate": {
+    "id": "",
+    "name": "",
+    "description": "",
+    "source": "",
+    "status": "pending",
+    "agentTier": "standard",
+    "chunkStrategy": {
+      "maxBatchSize": 100,
+      "groupBy": ""
+    },
+    "processHints": [],
+    "preChecks": [],
+    "postChecks": [],
+    "result": null
+  },
+  "globalHints": [
+    "Always complete backbone phase before starting enrichment",
+    "Run verification after each phase completes",
+    "Create snapshots before bulk integration steps",
+    "Keep batch sizes within recommended limits for the data type",
+    "Cross-reference sources should be ingested last"
+  ]
+}

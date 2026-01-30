@@ -1,0 +1,50 @@
+{
+  "version": "1.0.0",
+  "description": "Post-setup checklist for software projects",
+  "templateFor": "software_product",
+  "sections": [
+    {
+      "name": "Infrastructure",
+      "items": [
+        {"id": "sw-infra-1", "text": "Project directory created with all required files", "done": false, "auto": true},
+        {"id": "sw-infra-2", "text": "Storage backend configured and working", "done": false, "auto": true},
+        {"id": "sw-infra-3", "text": "Source root path verified and accessible", "done": false, "auto": false},
+        {"id": "sw-infra-4", "text": "All data source paths verified", "done": false, "auto": false},
+        {"id": "sw-infra-5", "text": "Profile saved to profile.json", "done": false, "auto": true}
+      ]
+    },
+    {
+      "name": "Sketch Design",
+      "items": [
+        {"id": "sw-skel-1", "text": "Review sketch design questions from template", "done": false, "auto": false},
+        {"id": "sw-skel-2", "text": "Define module/package hierarchy", "done": false, "auto": false},
+        {"id": "sw-skel-3", "text": "Define code node types (modules, classes, functions)", "done": false, "auto": false},
+        {"id": "sw-skel-4", "text": "Define documentation node types (API docs, guides)", "done": false, "auto": false},
+        {"id": "sw-skel-5", "text": "Define test node types (test suites, test cases)", "done": false, "auto": false},
+        {"id": "sw-skel-6", "text": "Define edge types (imports, calls, tests, documents)", "done": false, "auto": false},
+        {"id": "sw-skel-7", "text": "Define color assignments for each node type", "done": false, "auto": false}
+      ]
+    },
+    {
+      "name": "Ingestion Planning",
+      "items": [
+        {"id": "sw-plan-1", "text": "Ingestion plan created from template", "done": false, "auto": true},
+        {"id": "sw-plan-2", "text": "Backbone phase steps defined (core modules, API surface)", "done": false, "auto": false},
+        {"id": "sw-plan-3", "text": "Enrichment phase steps defined (configs, docs, tests)", "done": false, "auto": false},
+        {"id": "sw-plan-4", "text": "Cross-reference phase steps defined (dependency graph, test mapping)", "done": false, "auto": false},
+        {"id": "sw-plan-5", "text": "Validation phase steps defined", "done": false, "auto": false},
+        {"id": "sw-plan-6", "text": "Ingestion plan validated (no errors)", "done": false, "auto": false}
+      ]
+    },
+    {
+      "name": "Ready to Ingest",
+      "items": [
+        {"id": "sw-ready-1", "text": "Sketch reviewed and approved", "done": false, "auto": false},
+        {"id": "sw-ready-2", "text": "Parsers identified for each data source", "done": false, "auto": false},
+        {"id": "sw-ready-3", "text": "Batch sizes configured for each step", "done": false, "auto": false},
+        {"id": "sw-ready-4", "text": "Pre-ingestion snapshot taken", "done": false, "auto": false},
+        {"id": "sw-ready-5", "text": "First backbone step ready to execute", "done": false, "auto": false}
+      ]
+    }
+  ]
+}

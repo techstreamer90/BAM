@@ -1,0 +1,49 @@
+{
+  "id": "minimal",
+  "name": "Minimal Template",
+  "description": "Bare minimum starter template for quick prototyping or unknown project types",
+  "version": "1.0.0",
+  "suggestedColors": [
+    {
+      "name": "conceptual",
+      "description": "High-level requirements and specifications"
+    },
+    {
+      "name": "design",
+      "description": "Implementation artifacts"
+    }
+  ],
+  "suggestedNodeTypes": [
+    "Project",
+    "Component",
+    "Document",
+    "DocSection",
+    "Requirement",
+    "Feature"
+  ],
+  "suggestedEdgeTypes": [
+    "CONTAINS",
+    "IMPLEMENTS",
+    "DEPENDS_ON",
+    "TRACES_TO",
+    "DOCUMENTS",
+    "REALIZES"
+  ],
+  "sketchDesignQuestions": [
+    "What is the project name and what does it produce?",
+    "What are the major components or subsystems?",
+    "What document types exist for this project?",
+    "What relationships matter most between components?",
+    "Where does the source data live?"
+  ],
+  "exampleSketch": {
+    "nodes": {
+      "project-top": {
+        "type": "Project",
+        "name": "Example Project",
+        "color": "conceptual"
+      }
+    },
+    "edges": {}
+  }
+}

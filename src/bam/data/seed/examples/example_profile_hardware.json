@@ -1,0 +1,57 @@
+{
+  "projectName": "FPGA Controller",
+  "projectDir": "C:/BAM_projects/fpga_ctrl_model",
+  "description": "Digital twin model of an FPGA-based motor controller covering RTL design, verification, and documentation",
+  "domain": "hardware",
+  "subDomain": "FPGA",
+  "sourceRoot": "C:/projects/fpga-ctrl",
+  "dataSources": [
+    {
+      "name": "RTL Modules",
+      "type": "rtl",
+      "location": "rtl/",
+      "format": "systemverilog",
+      "estimatedSize": "50 files"
+    },
+    {
+      "name": "Design Documentation",
+      "type": "documentation",
+      "location": "doc/",
+      "format": "markdown",
+      "estimatedSize": "20 files"
+    },
+    {
+      "name": "Verification Testbenches",
+      "type": "testbench",
+      "location": "dv/",
+      "format": "systemverilog",
+      "estimatedSize": "30 files"
+    },
+    {
+      "name": "Configuration Files",
+      "type": "configuration",
+      "location": "config/",
+      "format": "json",
+      "estimatedSize": "10 files"
+    }
+  ],
+  "complexity": {
+    "sourceTypeCount": 4,
+    "estimatedNodeCount": 2000,
+    "subsystemCount": 8,
+    "hasCrossReferences": true,
+    "hasTraceability": false
+  },
+  "useCases": [
+    "Understand module hierarchy and dependencies",
+    "Trace design decisions to RTL implementation",
+    "Map test coverage to design components",
+    "Impact analysis for design changes"
+  ],
+  "constraints": {
+    "existingTools": [],
+    "teamSize": "small",
+    "timeline": "normal",
+    "preferredBackend": ""
+  }
+}

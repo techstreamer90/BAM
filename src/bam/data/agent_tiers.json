@@ -1,0 +1,58 @@
+{
+  "version": "1.0.0",
+  "description": "Agent tier definitions for BAM pipeline stages and ingestion steps",
+  "tiers": {
+    "low": {
+      "description": "Simple, repetitive, low-risk tasks requiring minimal judgment",
+      "modelEquivalent": "Fast/small model (e.g. Haiku-class)",
+      "typicalTasks": [
+        "Downloading files from known URLs",
+        "File format conversion",
+        "Copying and organizing data",
+        "Running pre-built scripts with fixed parameters"
+      ],
+      "riskLevel": "low",
+      "humanOversight": "spot-check"
+    },
+    "standard": {
+      "description": "Moderate complexity tasks requiring some judgment and pattern recognition",
+      "modelEquivalent": "Mid-tier model (e.g. Sonnet-class)",
+      "typicalTasks": [
+        "Parsing structured documents",
+        "Basic data transformation",
+        "Report generation and summarization",
+        "Applying well-defined transform mappings"
+      ],
+      "riskLevel": "moderate",
+      "humanOversight": "review-output"
+    },
+    "high": {
+      "description": "Complex reasoning tasks requiring deep understanding and creative problem-solving",
+      "modelEquivalent": "Large/powerful model (e.g. Opus-class)",
+      "typicalTasks": [
+        "Sketch and schema design",
+        "Cross-reference and traceability mapping",
+        "Conflict resolution during integration",
+        "Model verification and consistency checking",
+        "Ingestion plan creation and ordering decisions"
+      ],
+      "riskLevel": "high",
+      "humanOversight": "review-before-commit"
+    }
+  },
+  "taskTypeDefaults": {
+    "download": "low",
+    "validate": "standard",
+    "parse": "standard",
+    "transform": "high",
+    "integrate": "high",
+    "verify": "high",
+    "report": "standard",
+    "fetch-delta": "low",
+    "diff": "standard",
+    "transform-changes": "high",
+    "merge": "high",
+    "sketch-design": "high",
+    "ingestion-planning": "high"
+  }
+}

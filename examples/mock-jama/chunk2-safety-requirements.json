@@ -1,0 +1,85 @@
+{
+  "exportInfo": {
+    "source": "mock-jama",
+    "exportedAt": "2026-01-26T11:00:00Z",
+    "project": "Vehicle Control System",
+    "chunk": 2,
+    "description": "Safety requirements - derives from core"
+  },
+  "items": [
+    {
+      "id": "SAF-001",
+      "type": "requirement",
+      "name": "Fault Detection",
+      "description": "The VCS shall detect and report faults in all critical sensors within 100ms.",
+      "status": "approved",
+      "priority": "critical",
+      "level": "safety",
+      "relationships": [
+        {"type": "derives", "target": "REQ-005"}
+      ]
+    },
+    {
+      "id": "SAF-002",
+      "type": "requirement",
+      "name": "Brake Override",
+      "description": "Brake input shall always override throttle input regardless of system state.",
+      "status": "approved",
+      "priority": "critical",
+      "level": "safety",
+      "relationships": [
+        {"type": "derives", "target": "REQ-002"},
+        {"type": "derives", "target": "REQ-003"}
+      ]
+    },
+    {
+      "id": "SAF-003",
+      "type": "requirement",
+      "name": "Limp Mode",
+      "description": "Upon detection of critical fault, VCS shall enter limp mode limiting speed to 30 km/h.",
+      "status": "approved",
+      "priority": "critical",
+      "level": "safety",
+      "relationships": [
+        {"type": "derives", "target": "SAF-001"}
+      ]
+    },
+    {
+      "id": "SAF-004",
+      "type": "requirement",
+      "name": "Redundant Sensors",
+      "description": "Critical sensors (brake pressure, steering angle) shall have redundant inputs with cross-checking.",
+      "status": "approved",
+      "priority": "critical",
+      "level": "safety",
+      "relationships": [
+        {"type": "derives", "target": "REQ-005"},
+        {"type": "derives", "target": "SAF-001"}
+      ]
+    },
+    {
+      "id": "SAF-005",
+      "type": "requirement",
+      "name": "Watchdog Timer",
+      "description": "A hardware watchdog shall reset the system if main loop exceeds 10ms execution time.",
+      "status": "approved",
+      "priority": "critical",
+      "level": "safety",
+      "relationships": [
+        {"type": "derives", "target": "REQ-007"}
+      ]
+    },
+    {
+      "id": "SAF-006",
+      "type": "requirement",
+      "name": "Power Loss Handling",
+      "description": "On power loss detection, VCS shall command brakes to safe state within 50ms.",
+      "status": "approved",
+      "priority": "critical",
+      "level": "safety",
+      "relationships": [
+        {"type": "derives", "target": "REQ-003"}
+      ]
+    }
+  ]
+}

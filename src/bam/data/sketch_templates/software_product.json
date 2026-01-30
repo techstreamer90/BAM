@@ -1,0 +1,122 @@
+{
+  "id": "software_product",
+  "name": "Software Product Template",
+  "description": "Template for software libraries, services, and applications",
+  "version": "1.0.0",
+  "suggestedColors": [
+    {
+      "name": "conceptual",
+      "description": "Requirements, user stories, feature specifications"
+    },
+    {
+      "name": "design",
+      "description": "Code modules, classes, functions, API definitions"
+    },
+    {
+      "name": "verification",
+      "description": "Unit tests, integration tests, test suites"
+    },
+    {
+      "name": "operational",
+      "description": "Deployment configs, monitoring, performance data"
+    }
+  ],
+  "suggestedNodeTypes": [
+    "Application",
+    "Service",
+    "Component",
+    "Requirement",
+    "Feature",
+    "UserStory",
+    "CodeModule",
+    "CodeClass",
+    "CodeFunction",
+    "APIEndpoint",
+    "DataModel",
+    "DataField",
+    "Configuration",
+    "TestSuite",
+    "TestCase",
+    "DocSection",
+    "Dependency",
+    "DeploymentUnit"
+  ],
+  "suggestedEdgeTypes": [
+    "CONTAINS",
+    "IMPLEMENTS",
+    "CALLS",
+    "DEPENDS_ON",
+    "TESTS",
+    "TRACES_TO",
+    "EXPOSES",
+    "CONSUMES",
+    "DOCUMENTS",
+    "DERIVES_FROM",
+    "DEPLOYS_AS",
+    "CONFIGURES",
+    "REALIZES"
+  ],
+  "sketchDesignQuestions": [
+    "What is the top-level application/service name and its major components?",
+    "What is the module/package structure of the codebase?",
+    "What are the key classes and their relationships?",
+    "What APIs are exposed (REST endpoints, gRPC services, etc.)?",
+    "What data models/schemas exist (database tables, message formats)?",
+    "What are the external dependencies and how are they managed?",
+    "What test suites exist and how are they organized?",
+    "What requirements or user stories drive the features?",
+    "Where is the source code hosted and how is it structured?",
+    "What deployment configurations exist (containers, services, environments)?"
+  ],
+  "exampleSketch": {
+    "nodes": {
+      "app-top": {
+        "type": "Application",
+        "name": "Example Service",
+        "color": "conceptual"
+      },
+      "comp-api": {
+        "type": "Component",
+        "name": "API Layer",
+        "color": "design"
+      },
+      "comp-core": {
+        "type": "Component",
+        "name": "Core Logic",
+        "color": "design"
+      },
+      "comp-data": {
+        "type": "Component",
+        "name": "Data Layer",
+        "color": "design"
+      }
+    },
+    "edges": {
+      "app-contains-api": {
+        "type": "contains",
+        "source": "app-top",
+        "target": "comp-api"
+      },
+      "app-contains-core": {
+        "type": "contains",
+        "source": "app-top",
+        "target": "comp-core"
+      },
+      "app-contains-data": {
+        "type": "contains",
+        "source": "app-top",
+        "target": "comp-data"
+      },
+      "api-calls-core": {
+        "type": "calls",
+        "source": "comp-api",
+        "target": "comp-core"
+      },
+      "core-calls-data": {
+        "type": "calls",
+        "source": "comp-core",
+        "target": "comp-data"
+      }
+    }
+  }
+}

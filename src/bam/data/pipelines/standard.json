@@ -1,0 +1,163 @@
+{
+  "id": "standard",
+  "name": "Standard Pipeline",
+  "description": "Backbone creation pipeline - creates graph model from top-level documents",
+  "version": "1.0.0",
+  "stages": [
+    {
+      "id": "download",
+      "name": "Download",
+      "description": "Fetch data from source",
+      "order": 1,
+      "timeout": 600000,
+      "retryable": true,
+      "onError": "halt",
+      "inputs": ["sourceConfig"],
+      "outputs": ["rawData", "downloadManifest"],
+      "agentTier": {
+        "recommended": "low",
+        "rationale": "Downloading is a straightforward fetch operation with no judgment required"
+      },
+      "chunkGuidance": null,
+      "processHints": [
+        "Verify source connectivity before starting bulk downloads",
+        "Log download manifest for traceability"
+      ]
+    },
+    {
+      "id": "validate",
+      "name": "Validate",
+      "description": "Validate downloaded data against source rules",
+      "order": 2,
+      "timeout": 300000,
+      "retryable": false,
+      "onError": "halt",
+      "inputs": ["rawData", "validationRules"],
+      "outputs": ["validatedData", "validationReport"],
+      "agentTier": {
+        "recommended": "standard",
+        "rationale": "Validation applies predefined rules but may require interpreting edge cases"
+      },
+      "chunkGuidance": null,
+      "processHints": [
+        "Review validation report for warnings, not just errors",
+        "Halt on schema violations; warn on missing optional fields"
+      ]
+    },
+    {
+      "id": "parse",
+      "name": "Parse",
+      "description": "Parse validated data into structured format",
+      "order": 3,
+      "timeout": 300000,
+      "retryable": false,
+      "onError": "halt",
+      "inputs": ["validatedData"],
+      "outputs": ["parsedData", "parseReport"],
+      "agentTier": {
+        "recommended": "standard",
+        "rationale": "Parsing uses defined grammars but may need judgment for ambiguous input"
+      },
+      "chunkGuidance": {
+        "maxBatchSize": 50,
+        "splitStrategy": "Split large source files into groups by module or directory"
+      },
+      "processHints": [
+        "Group files by module hierarchy for coherent parsing",
+        "Check parse report for partial-parse warnings"
+      ]
+    },
+    {
+      "id": "transform",
+      "name": "Transform",
+      "description": "Transform parsed data to graph nodes and edges",
+      "order": 4,
+      "timeout": 600000,
+      "retryable": false,
+      "onError": "halt",
+      "inputs": ["parsedData", "transformMapping"],
+      "outputs": ["nodes", "edges", "transformReport"],
+      "agentTier": {
+        "recommended": "high",
+        "rationale": "Transform requires mapping domain concepts to graph structure; needs deep understanding"
+      },
+      "chunkGuidance": {
+        "maxBatchSize": 100,
+        "splitStrategy": "Group by color or node type to maintain coherent transforms"
+      },
+      "processHints": [
+        "Ensure node IDs are stable and deterministic across runs",
+        "Validate edge endpoints exist before creating edges",
+        "Follow hierarchical ordering: parent nodes before children"
+      ]
+    },
+    {
+      "id": "integrate",
+      "name": "Integrate",
+      "description": "Integrate transformed data into graph model",
+      "order": 5,
+      "timeout": 300000,
+      "retryable": false,
+      "onError": "halt",
+      "preActions": ["createSnapshot"],
+      "inputs": ["nodes", "edges", "currentModel"],
+      "outputs": ["updatedModel", "integrationReport"],
+      "agentTier": {
+        "recommended": "high",
+        "rationale": "Integration resolves conflicts and merges data; requires careful judgment"
+      },
+      "chunkGuidance": {
+        "maxBatchSize": 200,
+        "splitStrategy": "Batch nodes by type; integrate sketch nodes before color"
+      },
+      "processHints": [
+        "Always create a snapshot before integration (preActions enforces this)",
+        "Resolve duplicate nodes by merging, not overwriting",
+        "Process sketch nodes before color data"
+      ]
+    },
+    {
+      "id": "verify",
+      "name": "Verify",
+      "description": "Verify model consistency after integration",
+      "order": 6,
+      "timeout": 300000,
+      "retryable": false,
+      "onError": "halt",
+      "inputs": ["updatedModel", "consistencyRules"],
+      "outputs": ["verificationReport", "issues"],
+      "agentTier": {
+        "recommended": "high",
+        "rationale": "Verification requires understanding model semantics and judging issue severity"
+      },
+      "chunkGuidance": null,
+      "processHints": [
+        "Check for orphan nodes (nodes with no edges)",
+        "Check for dangling edges (edges referencing missing nodes)",
+        "Verify color assignments are consistent with node types",
+        "Report but do not auto-fix issues; let human decide"
+      ]
+    },
+    {
+      "id": "report",
+      "name": "Report",
+      "description": "Generate final pipeline run report",
+      "order": 7,
+      "timeout": 60000,
+      "retryable": true,
+      "onError": "warn",
+      "inputs": ["allStageReports"],
+      "outputs": ["finalReport"],
+      "agentTier": {
+        "recommended": "standard",
+        "rationale": "Report generation aggregates data; moderate complexity"
+      },
+      "chunkGuidance": null,
+      "processHints": [
+        "Include summary statistics: nodes added/modified/deleted, edges added",
+        "Highlight any warnings or issues from earlier stages",
+        "Include timing information for performance tracking"
+      ]
+    }
+  ]
+}

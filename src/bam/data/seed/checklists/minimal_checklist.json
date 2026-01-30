@@ -1,0 +1,24 @@
+{
+  "version": "1.0.0",
+  "description": "Lightweight checklist for quick-start projects",
+  "templateFor": "minimal",
+  "sections": [
+    {
+      "name": "Infrastructure",
+      "items": [
+        {"id": "min-infra-1", "text": "Project directory created", "done": false, "auto": true},
+        {"id": "min-infra-2", "text": "Source root path verified", "done": false, "auto": false},
+        {"id": "min-infra-3", "text": "Profile saved", "done": false, "auto": true}
+      ]
+    },
+    {
+      "name": "Quick Setup",
+      "items": [
+        {"id": "min-setup-1", "text": "Define at least one node type", "done": false, "auto": false},
+        {"id": "min-setup-2", "text": "Define at least one edge type", "done": false, "auto": false},
+        {"id": "min-setup-3", "text": "Add at least one ingestion step", "done": false, "auto": false},
+        {"id": "min-setup-4", "text": "Run first ingestion", "done": false, "auto": false}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "version": "1.0.0",
+  "description": "IF-THEN rules for mapping project profiles to setup recommendations",
+  "templateRules": [
+    {
+      "id": "hw-domain",
+      "condition": {"domain": "hardware"},
+      "result": "hardware_product",
+      "rationale": "Hardware domain maps to hardware_product template with HW-specific node types and colors"
+    },
+    {
+      "id": "sw-domain",
+      "condition": {"domain": "software"},
+      "result": "software_product",
+      "rationale": "Software domain maps to software_product template with SW-specific node types"
+    },
+    {
+      "id": "mixed-hw-primary",
+      "condition": {"domain": "mixed", "subDomainHint": "hardware"},
+      "result": "hardware_product",
+      "rationale": "Mixed project with hardware emphasis uses hardware_product template"
+    },
+    {
+      "id": "mixed-sw-primary",
+      "condition": {"domain": "mixed", "subDomainHint": "software"},
+      "result": "software_product",
+      "rationale": "Mixed project with software emphasis uses software_product template"
+    },
+    {
+      "id": "other-quick",
+      "condition": {"domain": "other", "timeline": "quick"},
+      "result": "minimal",
+      "rationale": "Unknown domain with quick timeline uses minimal template for fast start"
+    },
+    {
+      "id": "other-normal",
+      "condition": {"domain": "other"},
+      "result": "software_product",
+      "rationale": "Unknown domain defaults to software_product template as general-purpose starting point"
+    }
+  ],
+  "backendRules": [
+    {
+      "id": "small-any",
+      "condition": {"estimatedNodeCount": {"max": 999}},
+      "result": "json",
+      "rationale": "Under 1K nodes — JSON backend is simple and sufficient"
+    },
+    {
+      "id": "medium-no-crossref",
+      "condition": {"estimatedNodeCount": {"min": 1000, "max": 9999}, "hasCrossReferences": false},
+      "result": "json",
+      "rationale": "1K-10K nodes without heavy cross-references — JSON handles this well"
+    },
+    {
+      "id": "medium-crossref",
+      "condition": {"estimatedNodeCount": {"min": 1000, "max": 9999}, "hasCrossReferences": true},
+      "result": "sqlite",
+      "rationale": "1K-10K nodes with cross-references benefits from SQLite indexing"
+    },
+    {
+      "id": "large-any",
+      "condition": {"estimatedNodeCount": {"min": 10000, "max": 99999}},
+      "result": "sqlite",
+      "rationale": "10K-100K nodes needs SQLite for query performance"
+    },
+    {
+      "id": "very-large-simple",
+      "condition": {"estimatedNodeCount": {"min": 100000}, "hasCrossReferences": false},
+      "result": "sqlite",
+      "rationale": "100K+ nodes without dense cross-references — SQLite still viable"
+    },
+    {
+      "id": "very-large-complex",
+      "condition": {"estimatedNodeCount": {"min": 100000}, "hasCrossReferences": true, "hasTraceability": true},
+      "result": "neo4j",
+      "rationale": "100K+ nodes with cross-references and traceability — Neo4j graph queries excel here"
+    }
+  ],
+  "pipelineRules": [
+    {
+      "id": "new-project",
+      "condition": {"isNewProject": true},
+      "result": "standard",
+      "rationale": "New project uses standard (full) pipeline"
+    },
+    {
+      "id": "update-project",
+      "condition": {"isNewProject": false},
+      "result": "incremental",
+      "rationale": "Existing project uses incremental (delta) pipeline"
+    }
+  ],
+  "parserRules": [
+    {
+      "id": "rtl-sources",
+      "sourceTypes": ["rtl"],
+      "formats": ["verilog", "systemverilog", "sv", "v"],
+      "parser": "rtl_parser",
+      "rationale": "RTL/Verilog sources use the RTL parser"
+    },
+    {
+      "id": "doc-sources",
+      "sourceTypes": ["documentation"],
+      "formats": ["markdown", "md", "docx", "doc", "pdf", "txt", "rst", "html"],
+      "parser": "docs_parser",
+      "rationale": "Documentation sources use the docs parser"
+    },
+    {
+      "id": "code-sources",
+      "sourceTypes": ["code"],
+      "formats": ["py", "python", "js", "ts", "java", "c", "cpp", "go", "rs", "rb"],
+      "parser": "docs_parser",
+      "rationale": "Source code files are parsed as structured text by the docs parser"
+    },
+    {
+      "id": "config-sources",
+      "sourceTypes": ["configuration", "requirements"],
+      "formats": ["json", "yaml", "yml", "xml", "csv", "toml"],
+      "parser": "config_parser",
+      "rationale": "Configuration and structured data sources use the config parser"
+    },
+    {
+      "id": "dv-sources",
+      "sourceTypes": ["testbench", "coverage"],
+      "formats": ["sv", "v", "ucdb", "xml"],
+      "parser": "dv_parser",
+      "rationale": "Verification sources (testbenches, coverage) use the DV parser"
+    }
+  ],
+  "phaseMapping": {
+    "description": "Maps source types to ingestion phases",
+    "backbone": ["rtl", "code", "documentation", "requirements"],
+    "enrichment": ["configuration", "testbench", "other"],
+    "cross-references": ["traceability", "coverage"],
+    "validation": []
+  }
+}

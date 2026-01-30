@@ -1,0 +1,177 @@
+# Model Questions Database
+# Human-readable test questions with expected answers for verification
+
+questions:
+  # Existence questions
+  - id: "q-001"
+    question: "Does the System Overview requirement exist?"
+    category: "existence"
+    tags: ["core", "critical"]
+    query:
+      type: "node_exists"
+      node_id: "mock-jama-core-REQ-001"
+    answer:
+      exists: true
+      type: "Requirement"
+      label: "System Overview"
+
+  - id: "q-002"
+    question: "Does the Fault Detection safety requirement exist?"
+    category: "existence"
+    tags: ["safety", "critical"]
+    query:
+      type: "node_exists"
+      node_id: "mock-jama-safety-SAF-001"
+    answer:
+      exists: true
+      type: "Requirement"
+
+  - id: "q-003"
+    question: "Does the Propulsion Controller specification exist?"
+    category: "existence"
+    tags: ["specs"]
+    query:
+      type: "node_exists"
+      node_id: "mock-jama-specs-SPEC-001"
+    answer:
+      exists: true
+      type: "Specification"
+
+  # Count questions
+  - id: "q-010"
+    question: "How many core requirements are there?"
+    category: "count"
+    tags: ["core", "count"]
+    query:
+      type: "node_count"
+      node_type: "Requirement"
+      source_id: "mock-jama-core"
+    answer:
+      count: 8
+
+  - id: "q-011"
+    question: "How many safety requirements are there?"
+    category: "count"
+    tags: ["safety", "count"]
+    query:
+      type: "node_count"
+      node_type: "Requirement"
+      source_id: "mock-jama-safety"
+    answer:
+      count: 6
+
+  - id: "q-012"
+    question: "How many specifications are there?"
+    category: "count"
+    tags: ["specs", "count"]
+    query:
+      type: "node_count"
+      node_type: "Specification"
+      source_id: "mock-jama-specs"
+    answer:
+      count: 7
+
+  - id: "q-013"
+    question: "Are there at least 20 total requirements?"
+    category: "count"
+    tags: ["count", "aggregate"]
+    query:
+      type: "node_count"
+      node_type: "Requirement"
+    answer:
+      min_count: 14  # 8 core + 6 safety = 14 from mock sources
+
+  # Relationship questions
+  - id: "q-020"
+    question: "Does Propulsion Control derive from System Overview?"
+    category: "relationship"
+    tags: ["core", "derivation"]
+    query:
+      type: "edge_exists"
+      source_node_id: "mock-jama-core-REQ-002"
+      target_node_id: "mock-jama-core-REQ-001"
+      edge_type: "DERIVES_FROM"
+    answer:
+      exists: true
+
+  - id: "q-021"
+    question: "Does Brake Override derive from Brake Control?"
+    category: "relationship"
+    tags: ["safety", "derivation"]
+    query:
+      type: "edge_exists"
+      source_node_id: "mock-jama-safety-SAF-002"
+      target_node_id: "mock-jama-core-REQ-003"
+      edge_type: "DERIVES_FROM"
+    answer:
+      exists: true
+
+  - id: "q-022"
+    question: "Does the Propulsion Controller satisfy Propulsion Control?"
+    category: "relationship"
+    tags: ["specs", "satisfies"]
+    query:
+      type: "edge_exists"
+      source_node_id: "mock-jama-specs-SPEC-001"
+      target_node_id: "mock-jama-core-REQ-002"
+      edge_type: "SATISFIES"
+    answer:
+      exists: true
+
+  - id: "q-023"
+    question: "Does the Brake Controller satisfy the Brake Override safety requirement?"
+    category: "relationship"
+    tags: ["specs", "safety", "satisfies"]
+    query:
+      type: "edge_exists"
+      source_node_id: "mock-jama-specs-SPEC-002"
+      target_node_id: "mock-jama-safety-SAF-002"
+      edge_type: "SATISFIES"
+    answer:
+      exists: true
+
+  # Traceability questions
+  - id: "q-030"
+    question: "Does System Overview have downstream dependencies?"
+    category: "traceability"
+    tags: ["core", "critical", "traceability"]
+    query:
+      type: "relationship_count"
+      node_id: "mock-jama-core-REQ-001"
+      edge_type: "DERIVES_FROM"
+    answer:
+      min_count: 5
+
+  - id: "q-031"
+    question: "Is Fault Detection connected to specifications?"
+    category: "traceability"
+    tags: ["safety", "traceability"]
+    query:
+      type: "relationship_count"
+      node_id: "mock-jama-safety-SAF-001"
+      edge_type: "SATISFIES"
+    answer:
+      min_count: 2
+
+  # Negative test questions
+  - id: "q-040"
+    question: "Does a nonexistent node NOT exist?"
+    category: "negative"
+    tags: ["negative"]
+    query:
+      type: "node_exists"
+      node_id: "nonexistent-node-12345"
+    answer:
+      exists: false
+
+  - id: "q-041"
+    question: "Does an impossible edge NOT exist?"
+    category: "negative"
+    tags: ["negative"]
+    query:
+      type: "edge_exists"
+      source_node_id: "mock-jama-core-REQ-001"
+      target_node_id: "nonexistent-node"
+      edge_type: "DERIVES_FROM"
+    answer:
+      exists: false

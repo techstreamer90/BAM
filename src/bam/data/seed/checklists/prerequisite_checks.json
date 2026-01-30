@@ -1,0 +1,79 @@
+{
+  "version": "1.0.0",
+  "description": "System prerequisite checks for BAM setup",
+  "checks": [
+    {
+      "id": "python-version",
+      "name": "Python 3.8+",
+      "type": "command",
+      "command": "python --version",
+      "expect": "3.8",
+      "comparison": "version_gte",
+      "required": true,
+      "message_pass": "Python version is sufficient",
+      "message_fail": "Python 3.8 or later is required. Install from https://www.python.org/"
+    },
+    {
+      "id": "pip-available",
+      "name": "pip available",
+      "type": "command",
+      "command": "python -m pip --version",
+      "expect": "",
+      "comparison": "exists",
+      "required": true,
+      "message_pass": "pip is available",
+      "message_fail": "pip is not available. Install pip or use 'python -m ensurepip'"
+    },
+    {
+      "id": "disk-space",
+      "name": "Disk space (100MB free)",
+      "type": "disk_space",
+      "min_mb": 100,
+      "required": true,
+      "message_pass": "Sufficient disk space available",
+      "message_fail": "Less than 100MB free disk space. Free up space before proceeding"
+    }
+  ],
+  "conditionalChecks": {
+    "json": [],
+    "sqlite": [],
+    "neo4j": [
+      {
+        "id": "neo4j-driver",
+        "name": "neo4j Python driver",
+        "type": "python_import",
+        "module": "neo4j",
+        "required": true,
+        "message_pass": "neo4j driver is installed",
+        "message_fail": "neo4j Python driver not found. Install with: pip install neo4j"
+      },
+      {
+        "id": "neo4j-server",
+        "name": "Neo4j server reachable",
+        "type": "note",
+        "required": false,
+        "message_pass": "Neo4j server check is manual",
+        "message_fail": "Ensure Neo4j server is running and accessible (default: bolt://localhost:7687)"
+      }
+    ],
+    "arango": [
+      {
+        "id": "arango-driver",
+        "name": "python-arango driver",
+        "type": "python_import",
+        "module": "arango",
+        "required": true,
+        "message_pass": "python-arango driver is installed",
+        "message_fail": "python-arango driver not found. Install with: pip install python-arango"
+      },
+      {
+        "id": "arango-server",
+        "name": "ArangoDB server reachable",
+        "type": "note",
+        "required": false,
+        "message_pass": "ArangoDB server check is manual",
+        "message_fail": "Ensure ArangoDB server is running and accessible (default: http://localhost:8529)"
+      }
+    ]
+  }
+}

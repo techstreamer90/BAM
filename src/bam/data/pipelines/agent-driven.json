@@ -1,0 +1,142 @@
+{
+  "id": "agent-driven",
+  "name": "Agent-Driven Pipeline",
+  "description": "LLM-driven ingestion pipeline — an agent reviews incoming data, produces a transform plan, and optionally proposes sketch changes for human approval.",
+  "version": "1.0.0",
+  "stages": [
+    {
+      "id": "download",
+      "name": "Download",
+      "description": "Fetch data from source",
+      "order": 1,
+      "timeout": 600000,
+      "retryable": true,
+      "onError": "halt",
+      "inputs": ["sourceConfig"],
+      "outputs": ["rawData", "downloadManifest"],
+      "agentTier": {
+        "recommended": "low",
+        "rationale": "Downloading is a straightforward fetch operation"
+      },
+      "chunkGuidance": null,
+      "processHints": [
+        "Verify source connectivity before starting bulk downloads",
+        "Log download manifest for traceability"
+      ]
+    },
+    {
+      "id": "agent-review",
+      "name": "Agent Review",
+      "description": "LLM agent analyses raw data and current sketch to produce a transform plan. May propose sketch changes requiring human approval.",
+      "order": 2,
+      "timeout": 120000,
+      "retryable": true,
+      "onError": "halt",
+      "inputs": ["rawData", "downloadManifest"],
+      "outputs": ["transformPlan", "sketchChanges", "agentReviewReport", "rawData"],
+      "agentTier": {
+        "recommended": "high",
+        "rationale": "Requires LLM reasoning about data-to-graph mapping"
+      },
+      "chunkGuidance": {
+        "strategy": "sample",
+        "note": "Default: sample first/last items. Set strategy to 'full' for thorough multi-call analysis."
+      },
+      "processHints": [
+        "Review the transform plan before proceeding to transform",
+        "Major sketch changes will pause the pipeline for human review",
+        "Minor sketch changes are auto-applied with logging"
+      ]
+    },
+    {
+      "id": "transform",
+      "name": "Transform",
+      "description": "Execute the agent-produced transform plan to create graph nodes and edges. Falls back to LLM for items that do not match any mapping.",
+      "order": 3,
+      "timeout": 600000,
+      "retryable": false,
+      "onError": "halt",
+      "inputs": ["rawData", "transformPlan"],
+      "outputs": ["nodes", "edges", "transformReport"],
+      "agentTier": {
+        "recommended": "high",
+        "rationale": "Plan-driven transform with LLM fallback for unmapped items"
+      },
+      "chunkGuidance": {
+        "maxBatchSize": 100,
+        "splitStrategy": "Group by node type per the transform plan"
+      },
+      "processHints": [
+        "Apply node mappings first, then edge mappings",
+        "Collect unmatched items for a single LLM fallback call",
+        "Ensure deterministic IDs as specified in the plan"
+      ]
+    },
+    {
+      "id": "integrate",
+      "name": "Integrate",
+      "description": "Integrate transformed data into graph model",
+      "order": 4,
+      "timeout": 300000,
+      "retryable": false,
+      "onError": "halt",
+      "preActions": ["createSnapshot"],
+      "inputs": ["nodes", "edges", "currentModel"],
+      "outputs": ["updatedModel", "integrationReport"],
+      "agentTier": {
+        "recommended": "high",
+        "rationale": "Integration resolves conflicts and merges data"
+      },
+      "chunkGuidance": {
+        "maxBatchSize": 200,
+        "splitStrategy": "Batch nodes by type; integrate sketch nodes before color"
+      },
+      "processHints": [
+        "Always create a snapshot before integration",
+        "Resolve duplicate nodes by merging, not overwriting"
+      ]
+    },
+    {
+      "id": "verify",
+      "name": "Verify",
+      "description": "Verify model consistency after integration",
+      "order": 5,
+      "timeout": 300000,
+      "retryable": false,
+      "onError": "halt",
+      "inputs": ["updatedModel", "consistencyRules"],
+      "outputs": ["verificationReport", "issues"],
+      "agentTier": {
+        "recommended": "high",
+        "rationale": "Verification requires understanding model semantics"
+      },
+      "chunkGuidance": null,
+      "processHints": [
+        "Check for orphan nodes",
+        "Check for dangling edges",
+        "Report but do not auto-fix issues"
+      ]
+    },
+    {
+      "id": "report",
+      "name": "Report",
+      "description": "Generate final pipeline run report",
+      "order": 6,
+      "timeout": 60000,
+      "retryable": true,
+      "onError": "warn",
+      "inputs": ["allStageReports"],
+      "outputs": ["finalReport"],
+      "agentTier": {
+        "recommended": "standard",
+        "rationale": "Report generation aggregates data"
+      },
+      "chunkGuidance": null,
+      "processHints": [
+        "Include transform plan summary in the report",
+        "Highlight any LLM fallback invocations",
+        "Include sketch change decisions if applicable"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,173 @@
+# Mock JAMA Core Requirements Fixtures
+# Verifies core requirement nodes and relationships from mock-jama-core source
+
+version: "1.0"
+source_id: "mock-jama-core"
+
+data_points:
+  # Node existence checks
+  - id: "core-001"
+    type: "node_exists"
+    description: "System Overview requirement exists"
+    tags: ["existence", "core", "critical"]
+    query:
+      node_id: "mock-jama-core-REQ-001"
+    expected:
+      exists: true
+      type: "Requirement"
+      label: "System Overview"
+
+  - id: "core-002"
+    type: "node_exists"
+    description: "Propulsion Control requirement exists"
+    tags: ["existence", "core"]
+    query:
+      node_id: "mock-jama-core-REQ-002"
+    expected:
+      exists: true
+      type: "Requirement"
+      label: "Propulsion Control"
+
+  - id: "core-003"
+    type: "node_exists"
+    description: "Brake Control requirement exists"
+    tags: ["existence", "core"]
+    query:
+      node_id: "mock-jama-core-REQ-003"
+    expected:
+      exists: true
+      type: "Requirement"
+      label: "Brake Control"
+
+  - id: "core-004"
+    type: "node_exists"
+    description: "Steering Control requirement exists"
+    tags: ["existence", "core"]
+    query:
+      node_id: "mock-jama-core-REQ-004"
+    expected:
+      exists: true
+      type: "Requirement"
+      label: "Steering Control"
+
+  - id: "core-005"
+    type: "node_exists"
+    description: "Sensor Integration requirement exists"
+    tags: ["existence", "core"]
+    query:
+      node_id: "mock-jama-core-REQ-005"
+    expected:
+      exists: true
+      type: "Requirement"
+      label: "Sensor Integration"
+
+  - id: "core-006"
+    type: "node_exists"
+    description: "Communication Bus requirement exists"
+    tags: ["existence", "core"]
+    query:
+      node_id: "mock-jama-core-REQ-006"
+    expected:
+      exists: true
+      type: "Requirement"
+      label: "Communication Bus"
+
+  - id: "core-007"
+    type: "node_exists"
+    description: "Response Time requirement exists"
+    tags: ["existence", "core", "performance"]
+    query:
+      node_id: "mock-jama-core-REQ-007"
+    expected:
+      exists: true
+      type: "Requirement"
+      label: "Response Time"
+
+  - id: "core-008"
+    type: "node_exists"
+    description: "Operating Temperature requirement exists"
+    tags: ["existence", "core", "environmental"]
+    query:
+      node_id: "mock-jama-core-REQ-008"
+    expected:
+      exists: true
+      type: "Requirement"
+      label: "Operating Temperature"
+
+  # Node count checks
+  - id: "core-count-001"
+    type: "node_count"
+    description: "Should have exactly 8 core requirements"
+    tags: ["count", "core"]
+    query:
+      node_type: "Requirement"
+      source_id: "mock-jama-core"
+    expected:
+      count: 8
+
+  # Edge existence checks
+  - id: "core-edge-001"
+    type: "edge_exists"
+    description: "REQ-002 derives from REQ-001"
+    tags: ["edge", "core", "derivation"]
+    query:
+      source_node_id: "mock-jama-core-REQ-002"
+      target_node_id: "mock-jama-core-REQ-001"
+      edge_type: "DERIVES_FROM"
+    expected:
+      exists: true
+
+  - id: "core-edge-002"
+    type: "edge_exists"
+    description: "REQ-003 derives from REQ-001"
+    tags: ["edge", "core", "derivation"]
+    query:
+      source_node_id: "mock-jama-core-REQ-003"
+      target_node_id: "mock-jama-core-REQ-001"
+      edge_type: "DERIVES_FROM"
+    expected:
+      exists: true
+
+  - id: "core-edge-003"
+    type: "edge_exists"
+    description: "REQ-004 derives from REQ-001"
+    tags: ["edge", "core", "derivation"]
+    query:
+      source_node_id: "mock-jama-core-REQ-004"
+      target_node_id: "mock-jama-core-REQ-001"
+      edge_type: "DERIVES_FROM"
+    expected:
+      exists: true
+
+  - id: "core-edge-004"
+    type: "edge_exists"
+    description: "REQ-005 derives from REQ-001"
+    tags: ["edge", "core", "derivation"]
+    query:
+      source_node_id: "mock-jama-core-REQ-005"
+      target_node_id: "mock-jama-core-REQ-001"
+      edge_type: "DERIVES_FROM"
+    expected:
+      exists: true
+
+  - id: "core-edge-005"
+    type: "edge_exists"
+    description: "REQ-007 derives from REQ-002 (response time -> propulsion)"
+    tags: ["edge", "core", "derivation"]
+    query:
+      source_node_id: "mock-jama-core-REQ-007"
+      target_node_id: "mock-jama-core-REQ-002"
+      edge_type: "DERIVES_FROM"
+    expected:
+      exists: true
+
+  # Relationship count checks
+  - id: "core-rel-001"
+    type: "relationship_count"
+    description: "REQ-001 has at least 5 DERIVES_FROM relationships"
+    tags: ["relationship", "core", "critical"]
+    query:
+      node_id: "mock-jama-core-REQ-001"
+      edge_type: "DERIVES_FROM"
+    expected:
+      min_count: 5

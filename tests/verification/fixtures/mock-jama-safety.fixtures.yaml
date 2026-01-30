@@ -1,0 +1,151 @@
+# Mock JAMA Safety Requirements Fixtures
+# Verifies safety requirement nodes and relationships from mock-jama-safety source
+
+version: "1.0"
+source_id: "mock-jama-safety"
+
+data_points:
+  # Node existence checks
+  - id: "safety-001"
+    type: "node_exists"
+    description: "Fault Detection requirement exists"
+    tags: ["existence", "safety", "critical"]
+    query:
+      node_id: "mock-jama-safety-SAF-001"
+    expected:
+      exists: true
+      type: "Requirement"
+      label: "Fault Detection"
+
+  - id: "safety-002"
+    type: "node_exists"
+    description: "Brake Override requirement exists"
+    tags: ["existence", "safety", "critical"]
+    query:
+      node_id: "mock-jama-safety-SAF-002"
+    expected:
+      exists: true
+      type: "Requirement"
+      label: "Brake Override"
+
+  - id: "safety-003"
+    type: "node_exists"
+    description: "Limp Mode requirement exists"
+    tags: ["existence", "safety"]
+    query:
+      node_id: "mock-jama-safety-SAF-003"
+    expected:
+      exists: true
+      type: "Requirement"
+      label: "Limp Mode"
+
+  - id: "safety-004"
+    type: "node_exists"
+    description: "Redundant Sensors requirement exists"
+    tags: ["existence", "safety"]
+    query:
+      node_id: "mock-jama-safety-SAF-004"
+    expected:
+      exists: true
+      type: "Requirement"
+      label: "Redundant Sensors"
+
+  - id: "safety-005"
+    type: "node_exists"
+    description: "Watchdog Timer requirement exists"
+    tags: ["existence", "safety"]
+    query:
+      node_id: "mock-jama-safety-SAF-005"
+    expected:
+      exists: true
+      type: "Requirement"
+      label: "Watchdog Timer"
+
+  - id: "safety-006"
+    type: "node_exists"
+    description: "Power Loss Handling requirement exists"
+    tags: ["existence", "safety", "critical"]
+    query:
+      node_id: "mock-jama-safety-SAF-006"
+    expected:
+      exists: true
+      type: "Requirement"
+      label: "Power Loss Handling"
+
+  # Node count checks
+  - id: "safety-count-001"
+    type: "node_count"
+    description: "Should have exactly 6 safety requirements"
+    tags: ["count", "safety"]
+    query:
+      node_type: "Requirement"
+      source_id: "mock-jama-safety"
+    expected:
+      count: 6
+
+  # Edge existence checks - cross-source derivations
+  - id: "safety-edge-001"
+    type: "edge_exists"
+    description: "SAF-001 derives from REQ-005 (fault detection -> sensor integration)"
+    tags: ["edge", "safety", "cross-source"]
+    query:
+      source_node_id: "mock-jama-safety-SAF-001"
+      target_node_id: "mock-jama-core-REQ-005"
+      edge_type: "DERIVES_FROM"
+    expected:
+      exists: true
+
+  - id: "safety-edge-002"
+    type: "edge_exists"
+    description: "SAF-002 derives from REQ-002 (brake override -> propulsion control)"
+    tags: ["edge", "safety", "cross-source"]
+    query:
+      source_node_id: "mock-jama-safety-SAF-002"
+      target_node_id: "mock-jama-core-REQ-002"
+      edge_type: "DERIVES_FROM"
+    expected:
+      exists: true
+
+  - id: "safety-edge-003"
+    type: "edge_exists"
+    description: "SAF-002 derives from REQ-003 (brake override -> brake control)"
+    tags: ["edge", "safety", "cross-source"]
+    query:
+      source_node_id: "mock-jama-safety-SAF-002"
+      target_node_id: "mock-jama-core-REQ-003"
+      edge_type: "DERIVES_FROM"
+    expected:
+      exists: true
+
+  - id: "safety-edge-004"
+    type: "edge_exists"
+    description: "SAF-003 derives from SAF-001 (limp mode -> fault detection)"
+    tags: ["edge", "safety", "internal"]
+    query:
+      source_node_id: "mock-jama-safety-SAF-003"
+      target_node_id: "mock-jama-safety-SAF-001"
+      edge_type: "DERIVES_FROM"
+    expected:
+      exists: true
+
+  - id: "safety-edge-005"
+    type: "edge_exists"
+    description: "SAF-005 derives from REQ-007 (watchdog -> response time)"
+    tags: ["edge", "safety", "cross-source"]
+    query:
+      source_node_id: "mock-jama-safety-SAF-005"
+      target_node_id: "mock-jama-core-REQ-007"
+      edge_type: "DERIVES_FROM"
+    expected:
+      exists: true
+
+  # Relationship count checks
+  - id: "safety-rel-001"
+    type: "relationship_count"
+    description: "SAF-001 has at least 2 DERIVES_FROM relationships"
+    tags: ["relationship", "safety"]
+    query:
+      node_id: "mock-jama-safety-SAF-001"
+      edge_type: "DERIVES_FROM"
+    expected:
+      min_count: 2

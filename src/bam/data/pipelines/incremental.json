@@ -1,0 +1,142 @@
+{
+  "id": "incremental",
+  "name": "Incremental Pipeline",
+  "description": "Delta processing pipeline - enriches model from various sources",
+  "version": "1.0.0",
+  "stages": [
+    {
+      "id": "fetch-delta",
+      "name": "Fetch Delta",
+      "description": "Fetch only changed data since last sync",
+      "order": 1,
+      "timeout": 300000,
+      "retryable": true,
+      "onError": "halt",
+      "inputs": ["sourceConfig", "lastSyncTimestamp"],
+      "outputs": ["deltaData", "fetchManifest"],
+      "agentTier": {
+        "recommended": "low",
+        "rationale": "Delta fetch is a straightforward operation using timestamps or hashes"
+      },
+      "chunkGuidance": null,
+      "processHints": [
+        "Verify last sync timestamp is valid before fetching",
+        "Log fetch manifest for auditability"
+      ]
+    },
+    {
+      "id": "diff",
+      "name": "Diff",
+      "description": "Compare delta with existing model to identify changes",
+      "order": 2,
+      "timeout": 300000,
+      "retryable": false,
+      "onError": "halt",
+      "inputs": ["deltaData", "currentModel"],
+      "outputs": ["additions", "modifications", "deletions", "diffReport"],
+      "agentTier": {
+        "recommended": "standard",
+        "rationale": "Diffing requires comparing structured data but follows defined rules"
+      },
+      "chunkGuidance": {
+        "maxBatchSize": 200,
+        "splitStrategy": "Group changes by node type for coherent diffs"
+      },
+      "processHints": [
+        "Distinguish between structural changes and attribute-only changes",
+        "Flag deletions for human review before applying"
+      ]
+    },
+    {
+      "id": "transform-changes",
+      "name": "Transform Changes",
+      "description": "Transform change set to graph operations",
+      "order": 3,
+      "timeout": 300000,
+      "retryable": false,
+      "onError": "halt",
+      "inputs": ["additions", "modifications", "deletions", "transformMapping"],
+      "outputs": ["graphOperations", "transformReport"],
+      "agentTier": {
+        "recommended": "high",
+        "rationale": "Transforming changes to graph operations requires understanding model semantics"
+      },
+      "chunkGuidance": {
+        "maxBatchSize": 100,
+        "splitStrategy": "Process additions first, then modifications, then deletions"
+      },
+      "processHints": [
+        "Order operations: additions before modifications before deletions",
+        "Validate that modifications don't break existing edges",
+        "Deletions should cascade to dependent edges"
+      ]
+    },
+    {
+      "id": "merge",
+      "name": "Merge",
+      "description": "Apply graph operations to model",
+      "order": 4,
+      "timeout": 300000,
+      "retryable": false,
+      "onError": "halt",
+      "preActions": ["createSnapshot"],
+      "inputs": ["graphOperations", "currentModel"],
+      "outputs": ["updatedModel", "mergeReport"],
+      "agentTier": {
+        "recommended": "high",
+        "rationale": "Merge must handle conflicts, ordering, and rollback decisions"
+      },
+      "chunkGuidance": {
+        "maxBatchSize": 200,
+        "splitStrategy": "Apply operations in dependency order; batch by operation type"
+      },
+      "processHints": [
+        "Always snapshot before merge (preActions enforces this)",
+        "Apply additions before modifications before deletions",
+        "On conflict, prefer the newer data but flag for review"
+      ]
+    },
+    {
+      "id": "verify",
+      "name": "Verify",
+      "description": "Verify model consistency after merge",
+      "order": 5,
+      "timeout": 300000,
+      "retryable": false,
+      "onError": "halt",
+      "inputs": ["updatedModel", "consistencyRules"],
+      "outputs": ["verificationReport", "issues"],
+      "agentTier": {
+        "recommended": "high",
+        "rationale": "Verification after incremental changes requires understanding what changed and why"
+      },
+      "chunkGuidance": null,
+      "processHints": [
+        "Focus verification on changed nodes and their neighbors",
+        "Check that deletions haven't created orphan nodes",
+        "Verify edge consistency for modified nodes"
+      ]
+    },
+    {
+      "id": "report",
+      "name": "Report",
+      "description": "Generate delta processing report",
+      "order": 6,
+      "timeout": 60000,
+      "retryable": true,
+      "onError": "warn",
+      "inputs": ["allStageReports", "diffReport"],
+      "outputs": ["finalReport"],
+      "agentTier": {
+        "recommended": "standard",
+        "rationale": "Report generation aggregates stage results; moderate complexity"
+      },
+      "chunkGuidance": null,
+      "processHints": [
+        "Summarize: additions, modifications, deletions applied",
+        "Include before/after model statistics",
+        "Highlight any merge conflicts that were auto-resolved"
+      ]
+    }
+  ]
+}

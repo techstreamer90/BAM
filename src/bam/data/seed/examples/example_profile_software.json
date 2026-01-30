@@ -1,0 +1,57 @@
+{
+  "projectName": "Auth Service",
+  "projectDir": "C:/BAM_projects/auth_service_model",
+  "description": "Digital twin of the authentication microservice, covering API surface, business logic, and test coverage",
+  "domain": "software",
+  "subDomain": "web-service",
+  "sourceRoot": "C:/repos/auth-service",
+  "dataSources": [
+    {
+      "name": "Python Source Code",
+      "type": "code",
+      "location": "src/",
+      "format": "python",
+      "estimatedSize": "120 files"
+    },
+    {
+      "name": "API Documentation",
+      "type": "documentation",
+      "location": "docs/",
+      "format": "markdown",
+      "estimatedSize": "15 files"
+    },
+    {
+      "name": "Configuration",
+      "type": "configuration",
+      "location": "config/",
+      "format": "yaml",
+      "estimatedSize": "5 files"
+    },
+    {
+      "name": "Test Suite",
+      "type": "testbench",
+      "location": "tests/",
+      "format": "python",
+      "estimatedSize": "80 files"
+    }
+  ],
+  "complexity": {
+    "sourceTypeCount": 4,
+    "estimatedNodeCount": 5000,
+    "subsystemCount": 6,
+    "hasCrossReferences": true,
+    "hasTraceability": false
+  },
+  "useCases": [
+    "Map API endpoints to implementation code",
+    "Understand module dependencies and call graphs",
+    "Trace test coverage to business logic",
+    "Onboard new developers with codebase overview"
+  ],
+  "constraints": {
+    "existingTools": ["Jira", "GitHub Actions"],
+    "teamSize": "small",
+    "timeline": "normal",
+    "preferredBackend": ""
+  }
+}

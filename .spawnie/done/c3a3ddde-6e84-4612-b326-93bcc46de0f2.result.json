@@ -1,0 +1,8 @@
+{
+  "task_id": "c3a3ddde-6e84-4612-b326-93bcc46de0f2",
+  "status": "completed",
+  "output": "[Mock Response]\nPrompt received (12 chars)\nCall #1\nEcho: What is 2+2?",
+  "error": null,
+  "completed_at": "2026-01-28T18:10:17.998757",
+  "duration_seconds": 0.10080647468566895
+}

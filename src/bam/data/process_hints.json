@@ -1,0 +1,80 @@
+{
+  "version": "1.0.0",
+  "description": "Global ordering advice and common mistakes for BAM ingestion",
+  "orderingRules": [
+    {
+      "id": "backbone-first",
+      "rule": "Ingest top-level/backbone documents before detail sources",
+      "rationale": "The sketch must have parent nodes before children can attach to them",
+      "priority": 1
+    },
+    {
+      "id": "sketch-before-color",
+      "rule": "Establish the graph sketch structure before enriching with color data",
+      "rationale": "Color attributes reference sketch nodes; nodes must exist first",
+      "priority": 2
+    },
+    {
+      "id": "hierarchical-order",
+      "rule": "Ingest parent nodes before child nodes within each source",
+      "rationale": "Child nodes reference parents via containment edges",
+      "priority": 3
+    },
+    {
+      "id": "cross-references-last",
+      "rule": "Ingest cross-reference and traceability sources after both endpoints exist",
+      "rationale": "Edges connecting two nodes require both nodes to already be in the model",
+      "priority": 4
+    },
+    {
+      "id": "verify-after-phase",
+      "rule": "Run model verification after completing each ingestion phase",
+      "rationale": "Early detection of structural problems prevents cascading errors",
+      "priority": 5
+    },
+    {
+      "id": "snapshot-before-risky",
+      "rule": "Create a model snapshot before any high-risk or bulk integration step",
+      "rationale": "Enables rollback if integration corrupts the model",
+      "priority": 6
+    }
+  ],
+  "commonMistakes": [
+    {
+      "id": "no-sketch-first",
+      "mistake": "Starting color ingestion before the sketch is complete",
+      "consequence": "Color data has no nodes to attach to; orphaned data",
+      "fix": "Complete the sketch design and backbone ingestion first"
+    },
+    {
+      "id": "wrong-order",
+      "mistake": "Ingesting detail sources before their parent/container sources",
+      "consequence": "Missing parent nodes cause integration failures or dangling edges",
+      "fix": "Follow the hierarchical order rule; use the ingestion plan"
+    },
+    {
+      "id": "too-large-batch",
+      "mistake": "Ingesting too many items in a single batch without chunking",
+      "consequence": "Memory issues, hard-to-debug errors, impossible to rollback partial work",
+      "fix": "Use chunk guidance from pipeline stages; keep batches within recommended limits"
+    },
+    {
+      "id": "skip-verification",
+      "mistake": "Skipping verification after integration steps",
+      "consequence": "Inconsistencies accumulate silently and become hard to fix later",
+      "fix": "Always run verify after integrate/merge stages"
+    },
+    {
+      "id": "no-snapshot",
+      "mistake": "Not creating snapshots before bulk operations",
+      "consequence": "No rollback path if something goes wrong",
+      "fix": "Create a snapshot before every major integration step"
+    },
+    {
+      "id": "cross-ref-too-early",
+      "mistake": "Ingesting traceability/coverage links before both endpoints exist",
+      "consequence": "Edges reference non-existent nodes; data loss or errors",
+      "fix": "Ingest cross-reference sources last, after all node sources are complete"
+    }
+  ]
+}

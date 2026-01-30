@@ -1,0 +1,50 @@
+{
+  "version": "1.0.0",
+  "description": "Post-setup checklist for hardware projects",
+  "templateFor": "hardware_product",
+  "sections": [
+    {
+      "name": "Infrastructure",
+      "items": [
+        {"id": "hw-infra-1", "text": "Project directory created with all required files", "done": false, "auto": true},
+        {"id": "hw-infra-2", "text": "Storage backend configured and working", "done": false, "auto": true},
+        {"id": "hw-infra-3", "text": "Source root path verified and accessible", "done": false, "auto": false},
+        {"id": "hw-infra-4", "text": "All data source paths verified", "done": false, "auto": false},
+        {"id": "hw-infra-5", "text": "Profile saved to profile.json", "done": false, "auto": true}
+      ]
+    },
+    {
+      "name": "Sketch Design",
+      "items": [
+        {"id": "hw-skel-1", "text": "Review sketch design questions from template", "done": false, "auto": false},
+        {"id": "hw-skel-2", "text": "Define top-level subsystem hierarchy", "done": false, "auto": false},
+        {"id": "hw-skel-3", "text": "Define RTL module node types and attributes", "done": false, "auto": false},
+        {"id": "hw-skel-4", "text": "Define documentation node types", "done": false, "auto": false},
+        {"id": "hw-skel-5", "text": "Define verification node types (testbenches, assertions)", "done": false, "auto": false},
+        {"id": "hw-skel-6", "text": "Define edge types (instantiation, traceability, coverage)", "done": false, "auto": false},
+        {"id": "hw-skel-7", "text": "Define color assignments for each node type", "done": false, "auto": false}
+      ]
+    },
+    {
+      "name": "Ingestion Planning",
+      "items": [
+        {"id": "hw-plan-1", "text": "Ingestion plan created from template", "done": false, "auto": true},
+        {"id": "hw-plan-2", "text": "Backbone phase steps defined (RTL modules, top-level docs)", "done": false, "auto": false},
+        {"id": "hw-plan-3", "text": "Enrichment phase steps defined (detailed specs, configs)", "done": false, "auto": false},
+        {"id": "hw-plan-4", "text": "Cross-reference phase steps defined (traceability, coverage)", "done": false, "auto": false},
+        {"id": "hw-plan-5", "text": "Validation phase steps defined", "done": false, "auto": false},
+        {"id": "hw-plan-6", "text": "Ingestion plan validated (no errors)", "done": false, "auto": false}
+      ]
+    },
+    {
+      "name": "Ready to Ingest",
+      "items": [
+        {"id": "hw-ready-1", "text": "Sketch reviewed and approved by team", "done": false, "auto": false},
+        {"id": "hw-ready-2", "text": "Parsers identified for each data source", "done": false, "auto": false},
+        {"id": "hw-ready-3", "text": "Batch sizes configured for each step", "done": false, "auto": false},
+        {"id": "hw-ready-4", "text": "Pre-ingestion snapshot taken", "done": false, "auto": false},
+        {"id": "hw-ready-5", "text": "First backbone step ready to execute", "done": false, "auto": false}
+      ]
+    }
+  ]
+}

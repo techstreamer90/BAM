@@ -1,0 +1,117 @@
+{
+  "id": "hardware_product",
+  "name": "Hardware Product Template",
+  "description": "Template for ASIC, SoC, FPGA, or mixed-signal hardware projects",
+  "version": "1.0.0",
+  "suggestedColors": [
+    {
+      "name": "conceptual",
+      "description": "Requirements, specifications, architecture documents"
+    },
+    {
+      "name": "design",
+      "description": "RTL modules, schematics, design documents, configuration registers"
+    },
+    {
+      "name": "verification",
+      "description": "Testbenches, assertions, coverage groups, test plans"
+    },
+    {
+      "name": "cv",
+      "description": "Characterization and validation measurements, lab results"
+    }
+  ],
+  "suggestedNodeTypes": [
+    "Product",
+    "Subsystem",
+    "Requirement",
+    "Specification",
+    "Feature",
+    "DesignDocument",
+    "DesignSection",
+    "RTLModule",
+    "Port",
+    "Signal",
+    "Register",
+    "RegisterField",
+    "AnalogBlock",
+    "Configuration",
+    "Testbench",
+    "TestPlan",
+    "TestCase",
+    "Assertion",
+    "CoverageGroup",
+    "CoverageBin",
+    "Measurement",
+    "TestResult",
+    "CVReport",
+    "DocSection"
+  ],
+  "suggestedEdgeTypes": [
+    "CONTAINS",
+    "INSTANTIATES",
+    "IMPLEMENTS",
+    "VERIFIES",
+    "TRACES_TO",
+    "DEPENDS_ON",
+    "CONNECTS_TO",
+    "COVERS",
+    "MEASURES",
+    "DOCUMENTS",
+    "DERIVES_FROM",
+    "CONFIGURES",
+    "REALIZES",
+    "HAS_PORT",
+    "ENRICHES"
+  ],
+  "sketchDesignQuestions": [
+    "What is the top-level product name and its major subsystems?",
+    "What specification documents exist and how are they structured?",
+    "What is the RTL module hierarchy (top module down to leaf modules)?",
+    "Are there configuration registers? What is the register map structure?",
+    "What verification environments exist (UVM testbenches, formal, etc.)?",
+    "What test plans and coverage models are in place?",
+    "Are there characterization/validation (CV) measurements or lab data?",
+    "What traceability links exist (requirements to design, design to verification)?",
+    "What source systems hold this data (Git repos, document servers, databases)?",
+    "Are there any analog/mixed-signal blocks that need special handling?"
+  ],
+  "exampleSketch": {
+    "nodes": {
+      "product-top": {
+        "id": "product-top",
+        "type": "Product",
+        "label": "Example SoC",
+        "source_id": null
+      },
+      "subsys-cpu": {
+        "id": "subsys-cpu",
+        "type": "Subsystem",
+        "label": "CPU Core",
+        "source_id": null
+      },
+      "subsys-periph": {
+        "id": "subsys-periph",
+        "type": "Subsystem",
+        "label": "Peripherals",
+        "source_id": null
+      }
+    },
+    "edges": {
+      "product-contains-cpu": {
+        "id": "product-contains-cpu",
+        "type": "CONTAINS",
+        "source_node_id": "product-top",
+        "target_node_id": "subsys-cpu",
+        "source_id": null
+      },
+      "product-contains-periph": {
+        "id": "product-contains-periph",
+        "type": "CONTAINS",
+        "source_node_id": "product-top",
+        "target_node_id": "subsys-periph",
+        "source_id": null
+      }
+    }
+  }
+}

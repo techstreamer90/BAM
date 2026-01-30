@@ -1,0 +1,101 @@
+{
+  "exportInfo": {
+    "source": "mock-jama",
+    "exportedAt": "2026-01-26T12:00:00Z",
+    "project": "Vehicle Control System",
+    "chunk": 3,
+    "description": "Technical specifications - satisfies requirements"
+  },
+  "items": [
+    {
+      "id": "SPEC-001",
+      "type": "specification",
+      "name": "Propulsion Controller Module",
+      "description": "The Propulsion Controller shall implement a PID control loop with configurable gains (Kp, Ki, Kd). Default tuning: Kp=1.2, Ki=0.05, Kd=0.3.",
+      "status": "approved",
+      "priority": "high",
+      "level": "component",
+      "relationships": [
+        {"type": "satisfies", "target": "REQ-002"},
+        {"type": "satisfies", "target": "REQ-007"}
+      ]
+    },
+    {
+      "id": "SPEC-002",
+      "type": "specification",
+      "name": "Brake Controller Module",
+      "description": "The Brake Controller shall implement ABS logic with 10Hz modulation frequency. Slip threshold: 15%.",
+      "status": "approved",
+      "priority": "high",
+      "level": "component",
+      "relationships": [
+        {"type": "satisfies", "target": "REQ-003"},
+        {"type": "satisfies", "target": "SAF-002"},
+        {"type": "satisfies", "target": "SAF-006"}
+      ]
+    },
+    {
+      "id": "SPEC-003",
+      "type": "specification",
+      "name": "Steering Assist Module",
+      "description": "EPS assist curve: 100% assist at 0-10 km/h, linearly decreasing to 20% at 120 km/h.",
+      "status": "approved",
+      "priority": "high",
+      "level": "component",
+      "relationships": [
+        {"type": "satisfies", "target": "REQ-004"}
+      ]
+    },
+    {
+      "id": "SPEC-004",
+      "type": "specification",
+      "name": "Sensor Hub",
+      "description": "Sensor Hub shall poll all sensors at 100Hz minimum. Data format: 16-bit signed integers, big-endian.",
+      "status": "approved",
+      "priority": "high",
+      "level": "component",
+      "relationships": [
+        {"type": "satisfies", "target": "REQ-005"},
+        {"type": "satisfies", "target": "SAF-001"},
+        {"type": "satisfies", "target": "SAF-004"}
+      ]
+    },
+    {
+      "id": "SPEC-005",
+      "type": "specification",
+      "name": "CAN Interface",
+      "description": "CAN controller: MCP2515 or equivalent. Message IDs: 0x100-0x1FF for VCS, 0x200-0x2FF for diagnostics.",
+      "status": "approved",
+      "priority": "medium",
+      "level": "component",
+      "relationships": [
+        {"type": "satisfies", "target": "REQ-006"}
+      ]
+    },
+    {
+      "id": "SPEC-006",
+      "type": "specification",
+      "name": "Fault Manager",
+      "description": "Fault Manager shall maintain fault history (last 100 faults) in EEPROM. DTC format: SAE J2012 compliant.",
+      "status": "approved",
+      "priority": "high",
+      "level": "component",
+      "relationships": [
+        {"type": "satisfies", "target": "SAF-001"},
+        {"type": "satisfies", "target": "SAF-003"}
+      ]
+    },
+    {
+      "id": "SPEC-007",
+      "type": "specification",
+      "name": "Watchdog Configuration",
+      "description": "External watchdog IC: MAX6369. Timeout period: 10ms. Reset pulse width: 100us minimum.",
+      "status": "approved",
+      "priority": "critical",
+      "level": "component",
+      "relationships": [
+        {"type": "satisfies", "target": "SAF-005"}
+      ]
+    }
+  ]
+}

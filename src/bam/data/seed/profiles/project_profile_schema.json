@@ -1,0 +1,138 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BAM Project Profile",
+  "description": "Schema for the project profile created during the BAM_seed interview process",
+  "type": "object",
+  "required": ["projectName", "projectDir", "domain", "sourceRoot", "dataSources", "complexity"],
+  "properties": {
+    "projectName": {
+      "type": "string",
+      "description": "Human-readable project name"
+    },
+    "projectDir": {
+      "type": "string",
+      "description": "Full path to the BAM project directory"
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief description of what the project does"
+    },
+    "domain": {
+      "type": "string",
+      "enum": ["hardware", "software", "mixed", "other"],
+      "description": "Primary domain of the project"
+    },
+    "subDomain": {
+      "type": "string",
+      "description": "More specific domain (e.g., ASIC, FPGA, web-service, embedded)",
+      "default": ""
+    },
+    "sourceRoot": {
+      "type": "string",
+      "description": "Full path to the source code/data being modeled"
+    },
+    "dataSources": {
+      "type": "array",
+      "description": "List of data sources to ingest",
+      "items": {
+        "type": "object",
+        "required": ["name", "type", "location", "format"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Human-readable source name"
+          },
+          "type": {
+            "type": "string",
+            "description": "Source type category",
+            "enum": [
+              "rtl", "code", "documentation", "requirements", "testbench",
+              "configuration", "coverage", "traceability", "other"
+            ]
+          },
+          "location": {
+            "type": "string",
+            "description": "Path to the source data (relative to sourceRoot or absolute)"
+          },
+          "format": {
+            "type": "string",
+            "description": "Data format (e.g., verilog, systemverilog, markdown, json, xml, csv)"
+          },
+          "estimatedSize": {
+            "type": "string",
+            "description": "Rough size estimate (e.g., '200 files', '50K lines', '1.2 GB')",
+            "default": ""
+          }
+        }
+      }
+    },
+    "complexity": {
+      "type": "object",
+      "description": "Complexity assessment of the project",
+      "required": ["sourceTypeCount", "estimatedNodeCount"],
+      "properties": {
+        "sourceTypeCount": {
+          "type": "integer",
+          "description": "Number of distinct source types",
+          "minimum": 1
+        },
+        "estimatedNodeCount": {
+          "type": "integer",
+          "description": "Estimated total nodes in the final model",
+          "minimum": 0
+        },
+        "subsystemCount": {
+          "type": "integer",
+          "description": "Number of major subsystems or components",
+          "default": 1
+        },
+        "hasCrossReferences": {
+          "type": "boolean",
+          "description": "Whether sources cross-reference each other",
+          "default": false
+        },
+        "hasTraceability": {
+          "type": "boolean",
+          "description": "Whether traceability between artifacts is required",
+          "default": false
+        }
+      }
+    },
+    "useCases": {
+      "type": "array",
+      "description": "What the model should help with",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "constraints": {
+      "type": "object",
+      "description": "Project constraints and preferences",
+      "properties": {
+        "existingTools": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Tools already in the workflow",
+          "default": []
+        },
+        "teamSize": {
+          "type": "string",
+          "description": "Team size (solo, small, large)",
+          "default": "solo"
+        },
+        "timeline": {
+          "type": "string",
+          "description": "Timeline pressure (quick, normal, thorough)",
+          "default": "normal"
+        },
+        "preferredBackend": {
+          "type": "string",
+          "description": "Preferred storage backend (empty = no preference)",
+          "enum": ["", "json", "sqlite", "neo4j", "arango"],
+          "default": ""
+        }
+      }
+    }
+  }
+}

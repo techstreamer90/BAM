@@ -1,0 +1,110 @@
+{
+  "version": "1.0.0",
+  "description": "Comparison matrix for BAM storage backends",
+  "backends": {
+    "json": {
+      "name": "JSON File",
+      "type": "json",
+      "strengths": [
+        "Zero setup required",
+        "Human-readable files",
+        "Easy to debug and inspect",
+        "Git-friendly (diff, merge)",
+        "No external dependencies"
+      ],
+      "weaknesses": [
+        "Slow for large datasets (full file read/write)",
+        "No query indexing",
+        "Memory-bound (entire file loaded)",
+        "No concurrent access support"
+      ],
+      "bestFor": [
+        "Small projects (< 10K nodes)",
+        "Prototyping and exploration",
+        "Projects that need version control on model data",
+        "Solo developer workflows"
+      ],
+      "maxNodes": 10000,
+      "requiresInstall": false,
+      "installNotes": "Built-in, no installation needed"
+    },
+    "sqlite": {
+      "name": "SQLite",
+      "type": "sqlite",
+      "strengths": [
+        "Fast indexed queries",
+        "Single-file database (portable)",
+        "Handles large datasets well",
+        "SQL query support",
+        "No server process needed"
+      ],
+      "weaknesses": [
+        "Less human-readable than JSON",
+        "Not optimized for graph traversal",
+        "Limited concurrent write access",
+        "Harder to diff in version control"
+      ],
+      "bestFor": [
+        "Medium to large projects (10K-500K nodes)",
+        "Projects needing fast attribute queries",
+        "Projects with moderate cross-references",
+        "Production workflows"
+      ],
+      "maxNodes": 500000,
+      "requiresInstall": false,
+      "installNotes": "Python sqlite3 module is built-in"
+    },
+    "neo4j": {
+      "name": "Neo4j",
+      "type": "neo4j",
+      "strengths": [
+        "Native graph traversal (blazing fast for relationship queries)",
+        "Cypher query language purpose-built for graphs",
+        "Excellent visualization tools",
+        "Scales to millions of nodes",
+        "ACID transactions"
+      ],
+      "weaknesses": [
+        "Requires server installation and management",
+        "Higher resource usage (RAM, disk)",
+        "Steeper learning curve",
+        "Not portable (server-dependent)"
+      ],
+      "bestFor": [
+        "Large projects (100K+ nodes) with dense cross-references",
+        "Projects requiring traceability analysis",
+        "Impact analysis across many relationship hops",
+        "Team environments with concurrent access"
+      ],
+      "maxNodes": 10000000,
+      "requiresInstall": true,
+      "installNotes": "Requires: Neo4j server (Community or Enterprise), Python neo4j driver (pip install neo4j)"
+    },
+    "arango": {
+      "name": "ArangoDB",
+      "type": "arango",
+      "strengths": [
+        "Multi-model (graph + document + key-value)",
+        "AQL query language (versatile)",
+        "Good graph traversal performance",
+        "Built-in web UI",
+        "Flexible schema"
+      ],
+      "weaknesses": [
+        "Requires server installation",
+        "Smaller community than Neo4j",
+        "Higher complexity for simple use cases",
+        "Resource-heavy for small projects"
+      ],
+      "bestFor": [
+        "Large projects needing both graph and document queries",
+        "Projects with heterogeneous data (structured + unstructured)",
+        "Advanced analytics workflows",
+        "Projects that may evolve beyond pure graph use"
+      ],
+      "maxNodes": 10000000,
+      "requiresInstall": true,
+      "installNotes": "Requires: ArangoDB server, Python python-arango driver (pip install python-arango)"
+    }
+  }
+}
