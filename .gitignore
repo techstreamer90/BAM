@@ -31,3 +31,6 @@ output/*
 
 # Misc personal notes
 misc/
+
+# Embedded repos
+moltbot/
